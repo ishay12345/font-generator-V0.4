@@ -94,12 +94,8 @@ def split_letters_from_image(image_path, output_dir):
         crop = img[y1:y2, x1:x2]
         name = hebrew_letters[i]
         cv2.imwrite(os.path.join(output_dir, f"{i:02d}_{name}.png"), crop)
-<<<<<<< HEAD
 
     print(f"✅ נחתכו {min(27, len(ordered))} אותיות ונשמרו בתיקייה:\n{output_dir}")
 
-=======
 
-    print(f"✅ נחתכו {min(27, len(ordered))} אותיות ונשמרו בתיקייה:\n{output_dir}")
->>>>>>> 8cd49f0 (הוספתי את הקובץ finisher-header)
 
