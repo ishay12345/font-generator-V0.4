@@ -4,56 +4,58 @@
   <meta charset="UTF-8">
   <title>ממיר כתב יד לפונט</title>
   <style>
-    /* כיסוי מלא */
     html, body {
-      height: 100%;
       margin: 0;
       padding: 0;
-      overflow: hidden;
-    }
-
-    /* רקע דינמי */
-    .finisher-header {
-      position: fixed;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
-      z-index: -1;
       overflow: hidden;
     }
 
-    /* גוף הדף */
     body {
-      direction: rtl;
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 40px;
-      margin: 0;
-      min-height: 100vh;
-      box-sizing: border-box;
-      position: relative;
+      direction: rtl;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+      background: transparent;
+      position: relative;
+    }
+
+    .finisher-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
     }
 
     h1 {
       color: #fff;
       margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
 
     form {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 20px;
-      border-radius: 12px;
-      display: inline-block;
-      box-shadow: 0 0 20px rgba(0,0,0,0.15);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 25px 30px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+      max-width: 300px;
+      width: 90%;
+      margin: 0 auto;
     }
 
     input[type="file"] {
-      margin: 10px 0;
+      margin: 12px 0;
+      width: 100%;
     }
 
     button, #download-btn {
@@ -67,6 +69,8 @@
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       transition: background 0.3s ease, transform 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
     }
 
     button:hover, #download-btn:hover {
@@ -82,7 +86,8 @@
     #status {
       margin-top: 20px;
       font-size: 1.1em;
-      color: white;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
   </style>
 </head>
@@ -104,10 +109,8 @@
     ⬇ הורד את הפונט
   </a>
 
-  <!-- קובץ האנימציה -->
+  <!-- רקע מונפש -->
   <script src="{{ url_for('static', filename='finisher-header.es5.min.js') }}"></script>
-
-  <!-- אתחול האנימציה -->
   <script type="text/javascript">
     new FinisherHeader({
       "count": 6,
@@ -169,10 +172,6 @@
       }
     });
   </script>
-
-</body>
-</html>
-
 
 </body>
 </html>
