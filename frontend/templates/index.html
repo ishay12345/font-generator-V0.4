@@ -4,12 +4,15 @@
   <meta charset="UTF-8">
   <title>ממיר כתב יד לפונט</title>
   <style>
-    /* תיקון: ודא שהעמוד באמת בגובה מלא */
+    /* כיסוי מלא */
     html, body {
       height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
     }
 
-    /* אנימציה כרקע */
+    /* רקע דינמי */
     .finisher-header {
       position: fixed;
       top: 0;
@@ -20,7 +23,7 @@
       overflow: hidden;
     }
 
-    /* עיצוב גוף הדף מעל האנימציה */
+    /* גוף הדף */
     body {
       direction: rtl;
       font-family: Arial, sans-serif;
@@ -30,6 +33,10 @@
       min-height: 100vh;
       box-sizing: border-box;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     h1 {
@@ -40,34 +47,42 @@
     form {
       background: rgba(255, 255, 255, 0.9);
       padding: 20px;
-      border-radius: 8px;
+      border-radius: 12px;
       display: inline-block;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 20px rgba(0,0,0,0.15);
     }
 
     input[type="file"] {
       margin: 10px 0;
     }
 
+    button, #download-btn {
+      margin-top: 20px;
+      background: linear-gradient(45deg, #6bd6ff, #9138e5);
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      font-size: 1em;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover, #download-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(45deg, #ffcb57, #ff333d);
+    }
+
+    #download-btn:disabled {
+      background: #888;
+      pointer-events: none;
+    }
+
     #status {
       margin-top: 20px;
       font-size: 1.1em;
       color: white;
-    }
-
-    #download-btn {
-      display: inline-block;
-      margin-top: 30px;
-      text-decoration: none;
-      background: #4CAF50;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-size: 1em;
-    }
-
-    #download-btn:disabled {
-      background: #aaa;
     }
   </style>
 </head>
@@ -112,6 +127,7 @@
     });
   </script>
 
+  <!-- לוגיקת שליחה -->
   <script>
     const form = document.getElementById('upload-form');
     const status = document.getElementById('status');
@@ -153,6 +169,10 @@
       }
     });
   </script>
+
+</body>
+</html>
+
 
 </body>
 </html>
