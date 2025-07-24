@@ -53,9 +53,28 @@
       margin: 0 auto;
     }
 
+    /* הסתרת קלט קובץ מקורי */
     input[type="file"] {
-      margin: 12px 0;
-      width: 100%;
+      display: none;
+    }
+
+    /* תיוג כפתור קובץ */
+    label[for="file"] {
+      display: inline-block;
+      margin-top: 10px;
+      background: linear-gradient(45deg, #ffcb57, #ff333d);
+      color: white;
+      padding: 12px 24px;
+      font-size: 1em;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    label[for="file"]:hover {
+      transform: scale(1.05);
+      background: linear-gradient(45deg, #6bd6ff, #9138e5);
     }
 
     button, #download-btn {
@@ -89,17 +108,29 @@
       color: #fff;
       text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
+
+    /* פוטר שדוחף את התחתית וממלא את הלבן */
+    .bottom-fill {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      height: 100px;
+      background: #9138e5;
+      z-index: -2;
+    }
   </style>
 </head>
 <body>
 
-  <!-- רקע דינמי -->
   <div class="finisher-header"></div>
 
   <h1>העלאת כתב יד והורדת פונט</h1>
 
   <form id="upload-form" enctype="multipart/form-data">
-    <input type="file" id="file" name="file" accept="image/*" required><br>
+    <!-- כפתור בחירת קובץ משופר -->
+    <input type="file" id="file" name="file" accept="image/*" required>
+    <label for="file">בחר תמונה</label><br>
     <button type="submit">שלח תמונה</button>
   </form>
 
@@ -109,7 +140,9 @@
     ⬇ הורד את הפונט
   </a>
 
-  <!-- רקע מונפש -->
+  <!-- אלמנט שתחתית העמוד לא תהיה לבנה -->
+  <div class="bottom-fill"></div>
+
   <script src="{{ url_for('static', filename='finisher-header.es5.min.js') }}"></script>
   <script type="text/javascript">
     new FinisherHeader({
@@ -130,7 +163,6 @@
     });
   </script>
 
-  <!-- לוגיקת שליחה -->
   <script>
     const form = document.getElementById('upload-form');
     const status = document.getElementById('status');
