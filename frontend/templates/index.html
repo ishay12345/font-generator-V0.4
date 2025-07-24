@@ -53,12 +53,10 @@
       margin: 0 auto;
     }
 
-    /* הסתרת קלט קובץ מקורי */
     input[type="file"] {
       display: none;
     }
 
-    /* תיוג כפתור קובץ */
     label[for="file"] {
       display: inline-block;
       margin-top: 10px;
@@ -109,7 +107,6 @@
       text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
 
-    /* פוטר שדוחף את התחתית וממלא את הלבן */
     .bottom-fill {
       position: fixed;
       bottom: 0;
@@ -118,6 +115,19 @@
       height: 100px;
       background: #9138e5;
       z-index: -2;
+    }
+
+    /* קישור לעמוד נוסף */
+    .page-link {
+      margin-top: 30px;
+      color: #fff;
+      font-size: 1em;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .page-link:hover {
+      color: #ffcb57;
     }
   </style>
 </head>
@@ -128,7 +138,6 @@
   <h1>העלאת כתב יד והורדת פונט</h1>
 
   <form id="upload-form" enctype="multipart/form-data">
-    <!-- כפתור בחירת קובץ משופר -->
     <input type="file" id="file" name="file" accept="image/*" required>
     <label for="file">בחר תמונה</label><br>
     <button type="submit">שלח תמונה</button>
@@ -140,11 +149,15 @@
     ⬇ הורד את הפונט
   </a>
 
-  <!-- אלמנט שתחתית העמוד לא תהיה לבנה -->
   <div class="bottom-fill"></div>
 
+  <!-- קישור לעמוד אחר -->
+  <div class="page-link" onclick="window.location.href='/instructions'">
+    איך מעלים את התמונה? 📷
+  </div>
+
   <script src="{{ url_for('static', filename='finisher-header.es5.min.js') }}"></script>
-  <script type="text/javascript">
+  <script>
     new FinisherHeader({
       "count": 6,
       "size": { "min": 1100, "max": 1300, "pulse": 0 },
@@ -167,12 +180,16 @@
     const form = document.getElementById('upload-form');
     const status = document.getElementById('status');
     const downloadBtn = document.getElementById('download-btn');
+    const fileInput = document.getElementById('file');
 
     downloadBtn.style.pointerEvents = 'none';
     downloadBtn.style.opacity = '0.5';
 
     form.addEventListener('submit', async e => {
       e.preventDefault();
+
+      const fileName = fileInput.files[0]?.name || '';
+
       status.textContent = '⏳ מעלה ומייצר פונט...';
       downloadBtn.style.pointerEvents = 'none';
       downloadBtn.style.opacity = '0.5';
@@ -190,11 +207,11 @@
           let msg = '';
           try {
             const data = await res.json();
-            msg = data.message || '✔️ התהליך הושלם';
+            msg = data.message || '✔️ התמונה הועלתה בהצלחה!';
           } catch {
-            msg = '✔️ התהליך הושלם';
+            msg = '✔️ התמונה הועלתה בהצלחה!';
           }
-          status.textContent = msg;
+          status.textContent = `${msg} (${fileName})`;
         }
       } catch (err) {
         status.textContent = '❌ שגיאה כללית: ' + err.message;
@@ -207,4 +224,3 @@
 
 </body>
 </html>
-
