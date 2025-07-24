@@ -89,6 +89,11 @@ def download_font():
         )
     return render_template('index.html', error='הפונט לא קיים להורדה'), 404
 
+# ✅ תוספת: עמוד הוראות ההעלאה
+@app.route('/instructions')
+def instructions():
+    return render_template('instructions.html')
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
 
