@@ -60,7 +60,7 @@ def generate_ttf(svg_folder, output_ttf):
 
             glyph = font.newGlyph(name)
             glyph.unicode = unicode_val
-            glyph.width = 280
+            glyph.width = 350
 
             # ✨ ריווח צמוד יותר בין אותיות
             glyph.leftMargin = 6
