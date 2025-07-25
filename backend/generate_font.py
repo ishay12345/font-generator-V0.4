@@ -3,6 +3,8 @@ from defcon import Font
 from ufo2ft import compileTTF
 from fontTools.svgLib.path import parse_path
 from fontTools.pens.ttGlyphPen import TTGlyphPen
+from fontTools.pens.transformPen import TransformPen
+from fontTools.misc.transform import Identity
 from xml.dom import minidom
 
 # מיפוי אותיות לעברית
@@ -64,14 +66,18 @@ def generate_ttf(svg_folder, output_ttf):
             glyph.leftMargin = 6
             glyph.rightMargin = 6
 
-            pen = glyph.getPen()
-
             successful = False
             for path_element in paths:
                 d = path_element.getAttribute('d')
                 if not d.strip():
                     continue
                 try:
+                    if name == "yod":
+                        transform = Identity.translate(0, 120)  # הזזה למעלה
+                        pen = TransformPen(glyph.getPen(), transform)
+                    else:
+                        pen = glyph.getPen()
+
                     parse_path(d, pen)
                     successful = True
                 except Exception as e:
@@ -107,6 +113,9 @@ def generate_ttf(svg_folder, output_ttf):
         print(f"\n🎉 הפונט נוצר בהצלחה בנתיב: {output_ttf}")
         return True
     except Exception as e:
+        print(f"❌ שגיאה בשמירת הפונט: {e}")
+        return False
+
         print(f"❌ שגיאה בשמירת הפונט: {e}")
         return False
 
