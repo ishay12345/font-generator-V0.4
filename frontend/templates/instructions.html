@@ -82,7 +82,6 @@
       text-shadow: 0 0 8px rgba(0,0,0,0.3);
     }
 
-    /* כפתור חזור לדף הראשי */
     .back-btn {
       position: fixed;
       top: 20px;
@@ -103,6 +102,16 @@
       transform: scale(1.05);
       background: linear-gradient(45deg, #ffcb57, #ff333d);
     }
+
+    .bottom-fill {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      height: 100px;
+      background: #9138e5;
+      z-index: -2;
+    }
   </style>
 </head>
 <body>
@@ -110,7 +119,10 @@
   <!-- רקע אנימציה -->
   <div class="finisher-header"></div>
 
-  <!-- כפתור חזרה לעמוד הראשי -->
+  <!-- פס רקע לתחתית -->
+  <div class="bottom-fill"></div>
+
+  <!-- כפתור חזרה -->
   <a class="back-btn" href="/">⏪ חזרה לדף הראשי</a>
 
   <div class="container">
@@ -144,7 +156,7 @@
     <div class="footer">בהצלחה ותרגישו חופשי לחזור לעמוד הראשי אחרי ההעלאה 🙌</div>
   </div>
 
-  <!-- סקריפט הרקע -->
+  <!-- רקע אנימציה -->
   <script src="{{ url_for('static', filename='finisher-header.es5.min.js') }}"></script>
   <script>
     new FinisherHeader({
@@ -167,3 +179,4 @@
 
 </body>
 </html>
+
