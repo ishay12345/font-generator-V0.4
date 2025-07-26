@@ -48,16 +48,26 @@
       text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
 
+    .logo-container {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+    }
+
     .logo {
-      max-width: 400px;
-      margin-top: 40px;
-      margin-bottom: 20px;
+      max-width: 300px;
+    }
+
+    .main-content {
+      margin-top: 180px; /* מרווח מתחת ללוגו */
     }
 
     .welcome {
       color: #fff;
       font-size: 1.1em;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
 
@@ -179,7 +189,11 @@
       }
 
       .logo {
-        max-width: 200px;
+        max-width: 120px;
+      }
+
+      .main-content {
+        margin-top: 150px;
       }
 
       .welcome {
@@ -193,31 +207,35 @@
   <div class="finisher-header"></div>
   <div class="bsd">בס"ד</div>
 
-  <!-- לוגו -->
-  <img class="logo" src="{{ url_for('static', filename='my-removebg-preview.png') }}" alt="לוגו">
+  <!-- לוגו במיקום עליון קבוע -->
+  <div class="logo-container">
+    <img class="logo" src="{{ url_for('static', filename='my-removebg-preview.png') }}" alt="לוגו">
+  </div>
 
-  <!-- טקסט קבלת פנים -->
-  <div class="welcome">ברוכים הבאים לאתר שיצור את הפונט בשבילכם לכל מטרה</div>
+  <div class="main-content">
+    <!-- טקסט קבלת פנים -->
+    <div class="welcome">ברוכים הבאים לאתר שיצור את הפונט בשבילכם לכל מטרה</div>
 
-  <h1>העלאת כתב יד והורדת פונט</h1>
+    <h1>העלאת כתב יד והורדת פונט</h1>
 
-  <form id="upload-form" enctype="multipart/form-data">
-    <input type="file" id="file" name="file" accept="image/*" required>
-    <label id="file-label" for="file">בחר תמונה</label><br>
-    <button type="submit" id="submit-btn">שלח תמונה</button>
-  </form>
+    <form id="upload-form" enctype="multipart/form-data">
+      <input type="file" id="file" name="file" accept="image/*" required>
+      <label id="file-label" for="file">בחר תמונה</label><br>
+      <button type="submit" id="submit-btn">שלח תמונה</button>
+    </form>
 
-  <div id="status"></div>
+    <div id="status"></div>
 
-  <a id="download-btn" href="/download" download="my_font.ttf">
-    ⬇ הורד את הפונט
-  </a>
+    <a id="download-btn" href="/download" download="my_font.ttf">
+      ⬇ הורד את הפונט
+    </a>
+
+    <div class="page-link" onclick="window.location.href='/instructions'">
+      איך מעלים את התמונה? 📷
+    </div>
+  </div>
 
   <div class="bottom-fill"></div>
-
-  <div class="page-link" onclick="window.location.href='/instructions'">
-    איך מעלים את התמונה? 📷
-  </div>
 
   <script src="{{ url_for('static', filename='finisher-header.es5.min.js') }}"></script>
   <script>
