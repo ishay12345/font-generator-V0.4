@@ -70,7 +70,7 @@
       display: none;
     }
 
-    label[for="file"] {
+    #file-label {
       display: inline-block;
       margin-top: 10px;
       background: linear-gradient(45deg, #ffcb57, #ff333d);
@@ -83,7 +83,7 @@
       transition: background 0.3s ease, transform 0.2s ease;
     }
 
-    label[for="file"]:hover {
+    #file-label:hover {
       transform: scale(1.05);
       background: linear-gradient(45deg, #6bd6ff, #9138e5);
     }
@@ -152,7 +152,7 @@
         font-size: 1.5em;
       }
 
-      label[for="file"],
+      #file-label,
       button,
       #download-btn {
         font-size: 0.9em;
@@ -176,7 +176,7 @@
 
   <form id="upload-form" enctype="multipart/form-data">
     <input type="file" id="file" name="file" accept="image/*" required>
-    <label for="file">בחר תמונה</label><br>
+    <label id="file-label" for="file">בחר תמונה</label><br>
     <button type="submit" id="submit-btn">שלח תמונה</button>
   </form>
 
@@ -217,20 +217,32 @@
     const status = document.getElementById('status');
     const downloadBtn = document.getElementById('download-btn');
     const fileInput = document.getElementById('file');
+    const fileLabel = document.getElementById('file-label');
     const submitBtn = document.getElementById('submit-btn');
 
     downloadBtn.style.pointerEvents = 'none';
     downloadBtn.style.opacity = '0.5';
 
+    // שינוי טקסט בלייב אחרי בחירת קובץ
+    fileInput.addEventListener('change', () => {
+      const fileName = fileInput.files[0]?.name || '';
+      if (fileName) {
+        fileLabel.textContent = `✔️ התמונה הועלתה: ${fileName}`;
+        fileLabel.style.background = '#555';
+        fileLabel.style.cursor = 'default';
+        fileLabel.style.pointerEvents = 'none';
+      }
+    });
+
     form.addEventListener('submit', async e => {
       e.preventDefault();
 
       const fileName = fileInput.files[0]?.name || '';
-      status.textContent = '⏳ מעלה ומייצר פונט...';
-
+      status.textContent = '';
+      submitBtn.textContent = '⏳ יוצר את הפונט...';
+      submitBtn.disabled = true;
       downloadBtn.style.pointerEvents = 'none';
       downloadBtn.style.opacity = '0.5';
-      submitBtn.disabled = true;
 
       const formData = new FormData(form);
       try {
@@ -241,19 +253,22 @@
         if (!res.ok) {
           const text = await res.text();
           status.textContent = '❌ שגיאה בתהליך: ' + text;
+          submitBtn.textContent = 'שלח תמונה';
           submitBtn.disabled = false;
         } else {
           let msg = '';
           try {
             const data = await res.json();
-            msg = data.message || '✔️ התמונה הועלתה בהצלחה!';
+            msg = data.message || '✔️ הפונט מוכן!';
           } catch {
-            msg = '✔️ התמונה הועלתה בהצלחה!';
+            msg = '✔️ הפונט מוכן!';
           }
           status.textContent = `${msg} (${fileName})`;
+          submitBtn.textContent = '✔️ הפונט מוכן!';
         }
       } catch (err) {
         status.textContent = '❌ שגיאה כללית: ' + err.message;
+        submitBtn.textContent = 'שלח תמונה';
         submitBtn.disabled = false;
       } finally {
         downloadBtn.style.pointerEvents = 'auto';
@@ -264,4 +279,3 @@
 
 </body>
 </html>
-
