@@ -20,7 +20,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       min-height: 100vh;
       box-sizing: border-box;
       background: transparent;
@@ -50,18 +50,21 @@
 
     .logo-container {
       position: absolute;
-      top: 20px;
+      top: 10px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 1;
+      z-index: 10;
     }
 
     .logo {
-      max-width: 300px;
+      max-width: 200px;
     }
 
     .main-content {
-      margin-top: 180px; /* מרווח מתחת ללוגו */
+      margin-top: 130px; /* קרוב ללוגו */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .welcome {
@@ -193,7 +196,7 @@
       }
 
       .main-content {
-        margin-top: 150px;
+        margin-top: 120px;
       }
 
       .welcome {
@@ -207,13 +210,12 @@
   <div class="finisher-header"></div>
   <div class="bsd">בס"ד</div>
 
-  <!-- לוגו במיקום עליון קבוע -->
+  <!-- לוגו -->
   <div class="logo-container">
     <img class="logo" src="{{ url_for('static', filename='my-removebg-preview.png') }}" alt="לוגו">
   </div>
 
   <div class="main-content">
-    <!-- טקסט קבלת פנים -->
     <div class="welcome">ברוכים הבאים לאתר שיצור את הפונט בשבילכם לכל מטרה</div>
 
     <h1>העלאת כתב יד והורדת פונט</h1>
