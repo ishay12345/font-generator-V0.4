@@ -48,6 +48,19 @@
       text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
 
+    .logo {
+      max-width: 140px;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    .welcome {
+      color: #fff;
+      font-size: 1.1em;
+      margin-bottom: 25px;
+      text-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
     h1 {
       color: #fff;
       margin-bottom: 20px;
@@ -164,6 +177,14 @@
         right: 10px;
         top: 8px;
       }
+
+      .logo {
+        max-width: 100px;
+      }
+
+      .welcome {
+        font-size: 1em;
+      }
     }
   </style>
 </head>
@@ -171,6 +192,12 @@
 
   <div class="finisher-header"></div>
   <div class="bsd">בס"ד</div>
+
+  <!-- לוגו -->
+  <img class="logo" src="{{ url_for('static', filename='my-removebg-preview.png') }}" alt="לוגו">
+
+  <!-- טקסט קבלת פנים -->
+  <div class="welcome">ברוכים הבאים לאתר שיצור את הפונט בשבילכם לכל מטרה</div>
 
   <h1>העלאת כתב יד והורדת פונט</h1>
 
@@ -223,7 +250,6 @@
     downloadBtn.style.pointerEvents = 'none';
     downloadBtn.style.opacity = '0.5';
 
-    // שינוי טקסט בלייב אחרי בחירת קובץ
     fileInput.addEventListener('change', () => {
       const fileName = fileInput.files[0]?.name || '';
       if (fileName) {
