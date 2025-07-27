@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ממיר כתב יד לפונט</title>
   <style>
     html, body {
@@ -219,13 +219,14 @@
     <h1>העלאת כתב יד והורדת פונט</h1>
 
     <form id="upload-form" enctype="multipart/form-data">
-      <input type="file" id="file" name="file" accept="image/*" required>
-      <label id="file-label" for="file">בחר תמונה</label><br>
+      <input type="file" id="file" name="file" accept="image/*" required />
+      <label id="file-label" for="file">בחר תמונה</label><br />
       <button type="submit" id="submit-btn">שלח תמונה</button>
     </form>
 
     <div id="status"></div>
 
+    <!-- 🔁 כאן שיניתי את ההורדה להפניה לעמוד payment.html -->
     <a id="download-btn" href="/payment">
       ⬇ הורד את הפונט
     </a>
@@ -256,6 +257,7 @@
       "shapes": ["c"]
     });
   </script>
+
   <script>
     const form = document.getElementById('upload-form');
     const status = document.getElementById('status');
@@ -321,3 +323,4 @@
   </script>
 </body>
 </html>
+
