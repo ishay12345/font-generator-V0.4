@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>טופס תשלום</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    body {
+      background: linear-gradient(90deg, #2ecc71 60%, #27ae60 40.1%);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <form action="">
+      <div class="row">
+        <div class="col">
+          <h3 class="title">פרטי חיוב</h3>
+
+          <div class="inputBox">
+            <span>שם מלא :</span>
+            <input type="text" placeholder="יוסי כהן">
+          </div>
+          <div class="inputBox">
+            <span>אימייל :</span>
+            <input type="email" placeholder="example@example.com">
+          </div>
+          <div class="inputBox">
+            <span>כתובת :</span>
+            <input type="text" placeholder="רחוב - מספר - עיר">
+          </div>
+          <div class="inputBox">
+            <span>עיר :</span>
+            <input type="text" placeholder="תל אביב">
+          </div>
+
+          <div class="flex">
+            <div class="inputBox">
+              <span>מדינה :</span>
+              <input type="text" placeholder="ישראל">
+            </div>
+            <div class="inputBox">
+              <span>מיקוד :</span>
+              <input type="text" placeholder="1234567">
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <h3 class="title">תשלום</h3>
+
+          <div class="inputBox">
+            <span>כרטיסים נתמכים:</span>
+            <img src="/static/card_img.png" alt="כרטיסים נתמכים">
+          </div>
+          <div class="inputBox">
+            <span>שם בעל הכרטיס :</span>
+            <input type="text" placeholder="מר יוסי כהן">
+          </div>
+          <div class="inputBox">
+            <span>מספר כרטיס אשראי :</span>
+            <input type="number" placeholder="1111-2222-3333-4444">
+          </div>
+          <div class="inputBox">
+            <span>חודש תפוגה :</span>
+            <input type="text" placeholder="ינואר">
+          </div>
+
+          <div class="flex">
+            <div class="inputBox">
+              <span>שנת תפוגה :</span>
+              <input type="number" placeholder="2026">
+            </div>
+            <div class="inputBox">
+              <span>CVV :</span>
+              <input type="text" placeholder="123">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <input type="submit" value="לתשלום" class="submit-btn">
+    </form>
+  </div>
+</body>
+</html>
