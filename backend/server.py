@@ -94,6 +94,10 @@ def download_font():
 def instructions():
     return render_template('instructions.html')
 
+@app.route('/payment')
+def payment():
+    return render_template('payment.html')
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
 
