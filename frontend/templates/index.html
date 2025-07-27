@@ -61,7 +61,7 @@
     }
 
     .main-content {
-      margin-top: 220px; /* קרוב ללוגו */
+      margin-top: 220px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -206,11 +206,9 @@
   </style>
 </head>
 <body>
-
   <div class="finisher-header"></div>
   <div class="bsd">בס"ד</div>
 
-  <!-- לוגו -->
   <div class="logo-container">
     <img class="logo" src="{{ url_for('static', filename='my-removebg-preview.png') }}" alt="לוגו">
   </div>
@@ -228,7 +226,7 @@
 
     <div id="status"></div>
 
-    <a id="download-btn" href="/download" download="my_font.ttf">
+    <a id="download-btn" href="/payment">
       ⬇ הורד את הפונט
     </a>
 
@@ -258,7 +256,6 @@
       "shapes": ["c"]
     });
   </script>
-
   <script>
     const form = document.getElementById('upload-form');
     const status = document.getElementById('status');
@@ -322,6 +319,5 @@
       }
     });
   </script>
-
 </body>
 </html>
