@@ -70,6 +70,7 @@
     .welcome {
       color: #fff;
       font-size: 1.1em;
+      margin-top: 100px;
       margin-bottom: 20px;
       text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
@@ -213,10 +214,10 @@
     <img class="logo" src="{{ url_for('static', filename='my-removebg-preview.png') }}" alt="לוגו">
   </div>
 
-  <div class="main-content">
-    <div class="welcome">ברוכים הבאים לאתר שיצור את הפונט בשבילכם לכל מטרה</div>
+  <div class="welcome">ברוכים הבאים לאתר שיצור את הפונט בשבילכם לכל מטרה</div>
 
-    <h1>העלאת כתב יד והורדת פונט</h1>
+  <div class="main-content">
+    <h1>   העלו תמונה של הכתב יד שלכם ואנחנו נעשה את השאר...</h1>
 
     <form id="upload-form" enctype="multipart/form-data">
       <input type="file" id="file" name="file" accept="image/*" required />
@@ -226,7 +227,6 @@
 
     <div id="status"></div>
 
-    <!-- 🔁 כאן שיניתי את ההורדה להפניה לעמוד payment.html -->
     <a id="download-btn" href="/payment">
       ⬇ הורד את הפונט
     </a>
@@ -323,4 +323,3 @@
   </script>
 </body>
 </html>
-
