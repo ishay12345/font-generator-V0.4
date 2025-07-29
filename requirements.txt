@@ -8,3 +8,4 @@ fonttools
 cu2qu
 defcon
 ufo2ft
+requests
