@@ -1,9 +1,13 @@
-from flask import Flask, request, render_template, send_file, url_for
+from flask import Flask, request, render_template, send_file, url_for, redirect
 import os
 from split_letters import split_letters_from_image
 from bw_converter import convert_to_bw
 from svg_converter import convert_to_svg
 from generate_font import generate_ttf
+
+# תשלום
+from backend.create_payment import create_low_profile_payment
+from urllib.parse import parse_qs
 
 # ---- תיקיות עבודה ----
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -18,13 +22,18 @@ FONT_OUTPUT_PATH = os.path.join(EXPORT_FOLDER, 'my_font.ttf')
 for d in (UPLOAD_FOLDER, SPLIT_FOLDER, BW_FOLDER, SVG_FOLDER, EXPORT_FOLDER):
     os.makedirs(d, exist_ok=True)
 
-# אתחול Flask עם ה־templates
+# אתחול Flask עם תיקיית התבניות
 TEMPLATE_DIR = os.path.join(BASE_DIR, '..', 'frontend', 'templates')
 app = Flask(__name__, template_folder=TEMPLATE_DIR)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SPLIT_FOLDER']  = SPLIT_FOLDER
 app.config['BW_FOLDER']     = BW_FOLDER
 app.config['SVG_FOLDER']    = SVG_FOLDER
+
+
+# ----------------------
+# 🔠 דף הבית + העלאה
+# ----------------------
 
 @app.route('/')
 def index():
@@ -78,6 +87,7 @@ def upload_file():
         print("❌ שגיאה בתהליך:", str(e))
         return render_template('index.html', error=f"שגיאה: {str(e)}")
 
+
 @app.route('/download')
 def download_font():
     if os.path.exists(FONT_OUTPUT_PATH):
@@ -89,17 +99,46 @@ def download_font():
         )
     return render_template('index.html', error='הפונט לא קיים להורדה'), 404
 
-# ✅ תוספת: עמוד הוראות ההעלאה
+
+# ----------------------
+# 📄 דפי מידע
+# ----------------------
+
 @app.route('/instructions')
 def instructions():
     return render_template('instructions.html')
+
+
+# ----------------------
+# 💳 תשלום
+# ----------------------
 
 @app.route('/payment')
 def payment():
     return render_template('payment.html')
 
+@app.route("/start-payment", methods=["POST"])
+def start_payment():
+    email = request.form.get("email")
+    name = request.form.get("name") or "לקוח ללא שם"
+
+    if not email:
+        return "יש להזין כתובת מייל", 400
+
+    try:
+        payment_response = create_low_profile_payment(customer_email=email, customer_name=name)
+        result = parse_qs(payment_response)
+        redirect_url = result.get("url", [None])[0]
+
+        if redirect_url:
+            return redirect(redirect_url)
+        else:
+            return "לא התקבלה כתובת URL מתאימה", 500
+    except Exception as e:
+        return f"שגיאה בעת יצירת התשלום: {str(e)}", 500
+
+
+# ----------------------
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-
-
-
