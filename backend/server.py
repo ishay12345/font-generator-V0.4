@@ -30,7 +30,6 @@ app.config['SPLIT_FOLDER']  = SPLIT_FOLDER
 app.config['BW_FOLDER']     = BW_FOLDER
 app.config['SVG_FOLDER']    = SVG_FOLDER
 
-
 # ----------------------
 # 🔠 דף הבית + העלאה
 # ----------------------
@@ -87,7 +86,6 @@ def upload_file():
         print("❌ שגיאה בתהליך:", str(e))
         return render_template('index.html', error=f"שגיאה: {str(e)}")
 
-
 @app.route('/download')
 def download_font():
     if os.path.exists(FONT_OUTPUT_PATH):
@@ -99,7 +97,6 @@ def download_font():
         )
     return render_template('index.html', error='הפונט לא קיים להורדה'), 404
 
-
 # ----------------------
 # 📄 דפי מידע
 # ----------------------
@@ -107,7 +104,6 @@ def download_font():
 @app.route('/instructions')
 def instructions():
     return render_template('instructions.html')
-
 
 # ----------------------
 # 💳 תשלום
@@ -137,7 +133,6 @@ def start_payment():
     except Exception as e:
         return f"שגיאה בעת יצירת התשלום: {str(e)}", 500
 
-
 # ----------------------
 # 📬 Webhook – קבלת תוצאה מקרדקום
 # ----------------------
@@ -151,7 +146,14 @@ def cardcom_indicator():
     
     # לדוגמה – תוכל לבדוק אם OperationResponse == 0 כדי לדעת שהתשלום הצליח
     return "OK"
-    
+
+# ----------------------
+# 🎉 דף תודה לאחר תשלום
+# ----------------------
+
+@app.route('/thankyou')
+def thankyou():
+    return render_template('thankyou.html')
 
 # ----------------------
 
