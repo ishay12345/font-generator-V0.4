@@ -1,4 +1,4 @@
-import requests
+import requests 
 import urllib.parse
 
 # קונפיגורציה – מזהה ספק שלך וכו'
@@ -6,10 +6,10 @@ CARDCOM_TERMINAL_NUMBER = "172726"  # מספר טרמינל שלך (Cardcom Term
 CARDCOM_USER_NAME = "4cbscU43zRCYzL9YLSxV"  # שם משתמש API
 CARDCOM_LOW_PROFILE_URL = "https://secure.cardcom.solutions/Interface/LowProfile.aspx"
 
-# כתובת חזרה אחרי תשלום מוצלח / כישלון
-SUCCESS_RETURN_URL = "https://myfont.co.il/download"
+# כתובת חזרה אחרי תשלום מוצלח / כישלון / Webhook
+SUCCESS_RETURN_URL = "https://myfont.co.il/thankyou"               # ✅ דף תודה (ולא הורדה ישירה)
 ERROR_RETURN_URL   = "https://myfont.co.il/payment?status=failed"
-INDICATOR_URL      = "https://myfont.co.il/cardcom-indicator"  # ה־Webhook שלנו
+INDICATOR_URL      = "https://myfont.co.il/cardcom-indicator"     # ה־Webhook שלנו
 
 # הפונקציה שמייצרת תשלום + מבקשת חשבונית
 def create_low_profile_payment(customer_email: str, customer_name: str) -> str:
@@ -35,7 +35,7 @@ def create_low_profile_payment(customer_email: str, customer_name: str) -> str:
 
         "SumToBill": "24.90",                 # חשוב – חייב להיות זהה לסכום החשבונית
 
-        "SuccessRedirectUrl": SUCCESS_RETURN_URL,
+        "SuccessRedirectUrl": SUCCESS_RETURN_URL,  # ✅ אחרי תשלום – נשלח לדף תודה
         "ErrorRedirectUrl": ERROR_RETURN_URL,
         "CancelUrl": ERROR_RETURN_URL,
 
