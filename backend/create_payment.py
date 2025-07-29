@@ -22,7 +22,7 @@ def create_low_profile_payment(customer_email: str, customer_name: str) -> str:
         "InvoiceHead.CoinID": "1",  # ש"ח
 
         "InvoiceLines1.Description": "פונט אישי מכתב יד",
-        "InvoiceLines1.Price": "24.90",
+        "InvoiceLines1.Price": "2.90",
         "InvoiceLines1.Quantity": "1"
     }
 
@@ -33,7 +33,7 @@ def create_low_profile_payment(customer_email: str, customer_name: str) -> str:
         "LowProfileIndication": "1",          # מבקש מהמערכת לשלוח את הנתונים ל-Webhook
         "IndicatorUrl": INDICATOR_URL,        # כאן תגיע התשובה מקרדקום לאחר התשלום
 
-        "SumToBill": "24.90",                 # חשוב – חייב להיות זהה לסכום החשבונית
+        "SumToBill": "2.90",                 # חשוב – חייב להיות זהה לסכום החשבונית
 
         "SuccessRedirectUrl": SUCCESS_RETURN_URL,  # ✅ אחרי תשלום – נשלח לדף תודה
         "ErrorRedirectUrl": ERROR_RETURN_URL,
