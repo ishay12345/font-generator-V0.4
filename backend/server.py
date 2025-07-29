@@ -6,7 +6,7 @@ from svg_converter import convert_to_svg
 from generate_font import generate_ttf
 
 # תשלום
-from backend.create_payment import create_low_profile_payment
+from create_payment import create_low_profile_payment
 from urllib.parse import parse_qs
 
 # ---- תיקיות עבודה ----
