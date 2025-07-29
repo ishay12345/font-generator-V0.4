@@ -139,6 +139,21 @@ def start_payment():
 
 
 # ----------------------
+# 📬 Webhook – קבלת תוצאה מקרדקום
+# ----------------------
+
+@app.route('/cardcom-indicator', methods=['POST'])
+def cardcom_indicator():
+    data = request.form.to_dict()
+    print("📬 קיבלנו הודעה מקרדקום:")
+    for key, value in data.items():
+        print(f"{key}: {value}")
+    
+    # לדוגמה – תוכל לבדוק אם OperationResponse == 0 כדי לדעת שהתשלום הצליח
+    return "OK"
+    
+
+# ----------------------
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
