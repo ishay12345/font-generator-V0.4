@@ -148,6 +148,11 @@ def cardcom_indicator():
 def thankyou():
     return render_template('thankyou.html')
 
+@app.route('/faq')
+def faq():
+    return render_template('faq.html')
+
+
 # ----------------------
 
 if __name__ == '__main__':
