@@ -75,6 +75,25 @@
       color: #222;
     }
 
+    .example-link {
+      margin-top: 15px;
+      display: inline-block;
+      font-size: 1em;
+      background: linear-gradient(45deg, #6bd6ff, #9138e5);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+
+    .example-link:hover {
+      background: linear-gradient(45deg, #ffcb57, #ff333d);
+      transform: scale(1.05);
+    }
+
     .footer {
       margin-top: 40px;
       font-size: 1em;
@@ -135,25 +154,34 @@
 
     <div class="step">
       <div class="step-number">שלב 2</div>
-      <div class="step-text">כתבו את כל האותיות העבריות בסדר א-ב בצורה ברורה ונקייה, עם רווחים בין השורות.כתבו בכל שורה <strong>4 אותיות בלבד</strong>, כדי לאפשר חיתוך נוח.בסיום – כתבו את האותיות הסופיות לפי הסדר הבא בלבד: <strong>ך, ם, ן, ף, ץ</strong>. סדר שונה עלול לפגוע בתוצאה.</div>
+      <div class="step-text">
+        כתבו את כל האותיות העבריות בסדר א-ב בצורה ברורה ונקייה, עם רווחים בין השורות.<br>
+        כתבו בכל שורה <strong>4 אותיות בלבד</strong>, כדי לאפשר חיתוך נוח.<br>
+        בסיום – כתבו את האותיות הסופיות לפי הסדר הבא בלבד: <strong>ך, ם, ן, ף, ץ</strong>. סדר שונה עלול לפגוע בתוצאה.
+        <br><br>
+        ✅ רוצים דוגמה מוכנה? 
+        <a href="{{ url_for('static', filename='exp_pic.jpg') }}" download class="example-link">לחצו כאן להורדת תמונה לדוגמה</a>
+      </div>
     </div>
 
     <div class="step">
       <div class="step-number">שלב 3</div>
-      <div class="step-text">צלמו את הדף באיכות גבוהה, עם תאורה טובה (ללא צללים), והעלו אותו לכפתור שלח תמונה</div>
+      <div class="step-text">צלמו את הדף באיכות גבוהה, עם תאורה טובה (ללא צללים), והעלו אותו לכפתור שלח תמונה.</div>
     </div>
 
     <div class="step">
       <div class="step-number">שלב 4</div>
-      <div class="step-text">השלימו את התהליך והורידו את הקובץ, אח"כ פתחו את הקובץ ולחצו על הורדה</div>
+      <div class="step-text">השלימו את התהליך והורידו את הקובץ. אח"כ פתחו את הקובץ ולחצו על הורדה.</div>
     </div>
 
     <div class="step">
       <div class="step-number">שלב 5</div>
-      <div class="step-text">אחרי ההורדה  תדליקו מחדש את המחשב ומצאו את הפונט בוורד בשם "Hebrew Handwriting" !בהצלחה </div>
+      <div class="step-text">אחרי ההורדה, תדליקו מחדש את המחשב ומצאו את הפונט בוורד בשם "Hebrew Handwriting". בהצלחה! 🎉</div>
     </div>
 
-    <div class="footer">לכל בעיה אפשר לשלוח הודעה בוואצאפ למס :0556786895 😇  </div>
+    <div class="footer">
+      לכל בעיה אפשר לשלוח הודעה בוואצאפ למס' <strong>055-678-6895</strong> 😇
+    </div>
   </div>
 
   <!-- רקע אנימציה -->
@@ -179,4 +207,3 @@
 
 </body>
 </html>
-
