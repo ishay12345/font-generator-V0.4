@@ -47,24 +47,15 @@ def upload_file():
     if file.filename == '':
         return render_template('index.html', error='לא נבחר קובץ')
 
-    # שמירת התמונה
     filepath = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(filepath)
 
     try:
-        # שלב 1 – חיתוך
         split_letters_from_image(filepath, output_dir=SPLIT_FOLDER)
-
-        # שלב 2 – המרה לשחור־לבן
         convert_to_bw(input_dir=SPLIT_FOLDER, output_dir=BW_FOLDER)
-
-        # שלב 3 – המרה ל־SVG
         convert_to_svg(input_dir=BW_FOLDER, output_dir=SVG_FOLDER)
-
-        # שלב 4 – יצירת פונט TTF
         font_created = generate_ttf(svg_folder=SVG_FOLDER, output_ttf=FONT_OUTPUT_PATH)
 
-        # בדיקות
         cutting_done = len(os.listdir(SPLIT_FOLDER)) > 0
         bw_done      = len(os.listdir(BW_FOLDER)) > 0
         svg_done     = len(os.listdir(SVG_FOLDER)) > 0
@@ -137,14 +128,16 @@ def start_payment():
 # 📬 Webhook – קבלת תוצאה מקרדקום
 # ----------------------
 
-@app.route('/cardcom-indicator', methods=['POST'])
+@app.route('/cardcom-indicator', methods=['GET', 'POST'])
 def cardcom_indicator():
-    data = request.form.to_dict()
     print("📬 קיבלנו הודעה מקרדקום:")
+    print("🔹 שיטה:", request.method)
+
+    data = request.form.to_dict() if request.method == 'POST' else request.args.to_dict()
+
     for key, value in data.items():
         print(f"{key}: {value}")
     
-    # לדוגמה – תוכל לבדוק אם OperationResponse == 0 כדי לדעת שהתשלום הצליח
     return "OK"
 
 # ----------------------
