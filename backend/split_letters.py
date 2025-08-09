@@ -2,7 +2,6 @@
     import numpy as np
     from pathlib import Path
 
-
 def split_letters_from_image(image_path, output_dir):
     Path(output_dir).mkdir(parents=True, exist_ok=True)
 
@@ -34,10 +33,11 @@ def split_letters_from_image(image_path, output_dir):
         x, y, w, h = box
         pad_x = int(w * pad_ratio_x)
         pad_y = int(h * pad_ratio_y)
-        return (max(x - pad_x, 0),
-                max(y - pad_y, 0),
-                min(w + 2 * pad_x, img_gray.shape[1]),
-                min(h + 2 * pad_y, img_gray.shape[0]))
+        nx = max(x - pad_x, 0)
+        ny = max(y - pad_y, 0)
+        nw = min(w + 2 * pad_x, img_gray.shape[1] - nx)
+        nh = min(h + 2 * pad_y, img_gray.shape[0] - ny)
+        return (nx, ny, nw, nh)
 
     # פונקציה לבדוק אם מסביב לתיבה יש לבן
     def is_surrounded_by_white(x, y, w, h, img, margin=2):
@@ -69,28 +69,35 @@ def split_letters_from_image(image_path, output_dir):
 
     expanded_boxes = []
     for (x, y, w, h) in boxes:
+        # התייחסות מיוחדת לאותיות צרות (ו, י, ן)
         if w < h * 0.5:  # אות צרה
             bx, by, bw_, bh_ = expand_box((x, y, w, h), pad_ratio_x=0.6, pad_ratio_y=0.25)
         else:
             bx, by, bw_, bh_ = expand_box((x, y, w, h), pad_ratio_x=0.25, pad_ratio_y=0.25)
 
-        # הגדלה עד שיש מסגרת לבנה
+        # הרחבה עד שיש מסגרת לבנה
         bx, by, bw_, bh_ = expand_until_white_frame(bx, by, bw_, bh_, img_gray)
         expanded_boxes.append((bx, by, bw_, bh_))
 
-    # --- שלב 4: מיזוג אם יש יותר מדי ---
-    def merge_close_boxes(boxes, min_dist=5):
+    # --- שלב 4: מיזוג תיבות קרובות (טיפול מיוחד באות א) ---
+    def merge_close_boxes(boxes, min_dist=10):
         merged = []
         used = [False] * len(boxes)
         for i in range(len(boxes)):
-            if used[i]: continue
+            if used[i]:
+                continue
             x1, y1, w1, h1 = boxes[i]
             X1A, Y1A, X1B, Y1B = x1, y1, x1 + w1, y1 + h1
             for j in range(i + 1, len(boxes)):
-                if used[j]: continue
+                if used[j]:
+                    continue
                 x2, y2, w2, h2 = boxes[j]
                 X2A, Y2A, X2B, Y2B = x2, y2, x2 + w2, y2 + h2
-                if not (X2A > X1B + min_dist or X2B < X1A - min_dist or Y2A > Y1B + min_dist or Y2B < Y1A - min_dist):
+                # מיזוג אם קרובים בטווח ובגובה (כדי לאחד את שני חלקי האות א)
+                y_overlap = (min(Y1B, Y2B) - max(Y1A, Y2A)) > 0
+                x_dist = min(abs(X2A - X1B), abs(X1A - X2B))
+                height_diff = abs(h1 - h2)
+                if y_overlap and x_dist < min_dist and height_diff < 15:
                     X1A = min(X1A, X2A)
                     Y1A = min(Y1A, Y2A)
                     X1B = max(X1B, X2B)
@@ -101,16 +108,19 @@ def split_letters_from_image(image_path, output_dir):
         return merged
 
     while len(expanded_boxes) > 27:
+        prev_count = len(expanded_boxes)
         expanded_boxes = merge_close_boxes(expanded_boxes, min_dist=10)
+        if len(expanded_boxes) == prev_count:
+            break  # לא מתמזג יותר
 
-    # --- שלב 5: אם פחות מדי – להרחיב ---
+    # --- שלב 5: אם פחות מדי אותיות, להוסיף "ריבועים" ממוצעים כדי להגיע ל-27 ---
     if len(expanded_boxes) < 27:
-        avg_w = int(np.mean([b[2] for b in expanded_boxes]))
-        avg_h = int(np.mean([b[3] for b in expanded_boxes]))
+        avg_w = int(np.mean([b[2] for b in expanded_boxes])) if expanded_boxes else 50
+        avg_h = int(np.mean([b[3] for b in expanded_boxes])) if expanded_boxes else 50
         while len(expanded_boxes) < 27:
             expanded_boxes.append((0, 0, avg_w, avg_h))
 
-    # --- שלב 6: סידור סופי לשמירה ---
+    # --- שלב 6: מיון סופי — לפי שורות וסדר מימין לשמאל ---
     expanded_boxes = sorted(expanded_boxes, key=lambda b: (b[1], -b[0]))
 
     hebrew_letters = [
@@ -120,11 +130,12 @@ def split_letters_from_image(image_path, output_dir):
         'final_pe', 'final_tsadi'
     ]
 
+    # --- שלב 7: חיתוך ושמירת כל האותיות ---
     for i, (x, y, w, h) in enumerate(expanded_boxes[:27]):
         crop = img_gray[y:y+h, x:x+w]
         name = hebrew_letters[i]
         out_path = os.path.join(output_dir, f"{i:02d}_{name}.png")
         cv2.imwrite(out_path, crop)
-        print(f"נשמרה אות {i}: {name}")
+        print(f"✅ נשמרה אות {i}: {name}")
 
     print(f"\n✅ נחתכו ונשמרו {min(len(expanded_boxes),27)} אותיות בתיקייה:\n{output_dir}")
