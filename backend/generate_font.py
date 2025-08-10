@@ -79,6 +79,9 @@ def generate_ttf(svg_folder, output_ttf):
                         transform = Identity.translate(0, 120)  # הזזה מעלה
                     else:
                         transform = Identity.translate(0, 0)  # ללא שינוי
+                    elif name == "lamed":
+                        transform = Identity.translate(0, 300)  # הורדה
+
 
                     pen = TransformPen(glyph.getPen(), transform)
                     parse_path(d, pen)
