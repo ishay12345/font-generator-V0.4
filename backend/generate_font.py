@@ -2,7 +2,6 @@ import os
 from defcon import Font
 from ufo2ft import compileTTF
 from fontTools.svgLib.path import parse_path
-from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools.misc.transform import Identity
 from xml.dom import minidom
@@ -12,8 +11,8 @@ letter_map = {
    "alef": 0x05D0, "bet": 0x05D1, "gimel": 0x05D2, "dalet": 0x05D3,
     "he": 0x05D4, "vav": 0x05D5, "zayin": 0x05D6, "het": 0x05D7,
     "tet": 0x05D8, "lamed": 0x05DB,   
-    "yod":  0x05DC,  
-    "kaf": 0x05D9,  
+    "yod":  0x05D9,   # תיקן כאן - י זה 05D9
+    "kaf": 0x05DB,    # תיקן כאן - כ זה 05DB
     "mem": 0x05DE, "nun": 0x05E0, "samekh": 0x05E1, "ayin": 0x05E2,
     "pe": 0x05E4, "tsadi": 0x05E6, "qof": 0x05E7, "resh": 0x05E8,
     "shin": 0x05E9, "tav": 0x05EA,
@@ -73,11 +72,15 @@ def generate_ttf(svg_folder, output_ttf):
                     continue
                 try:
                     if name == "yod":
-                        transform = Identity.translate(0, 120)  # הזזה למעלה
-                        pen = TransformPen(glyph.getPen(), transform)
+                        transform = Identity.translate(0, 120)  # הזזה מעלה
+                    elif name == "qof":
+                        transform = Identity.translate(0, -120)  # הורדה
+                    elif name == "pe":
+                        transform = Identity.translate(0, 120)  # הזזה מעלה
                     else:
-                        pen = glyph.getPen()
+                        transform = Identity.translate(0, 0)  # ללא שינוי
 
+                    pen = TransformPen(glyph.getPen(), transform)
                     parse_path(d, pen)
                     successful = True
                 except Exception as e:
@@ -115,7 +118,3 @@ def generate_ttf(svg_folder, output_ttf):
     except Exception as e:
         print(f"❌ שגיאה בשמירת הפונט: {e}")
         return False
-
-        print(f"❌ שגיאה בשמירת הפונט: {e}")
-        return False
-
