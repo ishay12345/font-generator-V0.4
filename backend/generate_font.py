@@ -59,11 +59,11 @@ def generate_ttf(svg_folder, output_ttf):
 
             glyph = font.newGlyph(name)
             glyph.unicode = unicode_val
-            glyph.width = 350
+            glyph.width = 600
 
             # ✨ ריווח צמוד יותר בין אותיות
-            glyph.leftMargin = 6
-            glyph.rightMargin = 6
+            glyph.leftMargin = 40
+            glyph.rightMargin = 40
 
             successful = False
             for path_element in paths:
