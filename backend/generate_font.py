@@ -72,11 +72,11 @@ def generate_ttf(svg_folder, output_ttf):
                     continue
                 try:
                     if name == "yod":
-                        transform = Identity.translate(0, 120)  # הזזה מעלה
+                        transform = Identity.translate(0, 500)  # הזזה מעלה
                     elif name == "qof":
-                        transform = Identity.translate(0, -120)  # הורדה
+                        transform = Identity.translate(0, -200)  # הורדה
                     elif name == "pe":
-                        transform = Identity.translate(0, 120)  # הזזה מעלה
+                        transform = Identity.translate(0, 300)  # הזזה מעלה
                     elif name == "lamed":
                         transform = Identity.translate(0, 300)  # הורדה
                     else:
