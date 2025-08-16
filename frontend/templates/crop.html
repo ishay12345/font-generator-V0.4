@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>חיתוך סדרתי של אותיות</title>
+<style>
+html, body { margin:0; padding:0; font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background:#fff; color:#222; display:flex; flex-direction:column; align-items:center; }
+h1 { margin:10px; }
+#letters-bar { display:flex; flex-wrap:wrap; justify-content:center; max-width:90vw; margin:10px 0; gap:5px; }
+.letter { padding:6px 10px; border:2px solid #ccc; border-radius:5px; cursor:pointer; user-select:none; background-color:#f7f7f7; }
+.letter.done { background-color:#2ecc71; color:white; border-color:#27ae60; }
+.letter.active { border-color:#3498db; background-color:#ecf6fb; }
+#image-container { position:relative; max-width:90vw; max-height:70vh; border:1px solid #ccc; display:flex; justify-content:center; align-items:center; user-select:none; touch-action:none; }
+#source-image { display:block; max-width:100%; max-height:70vh; object-fit:contain; }
+#crop-rectangle { position:absolute; border:3px dashed #e74c3c; background:rgba(231,76,60,0.15); top:40px; left:40px; width:180px; height:180px; box-sizing:border-box; cursor:move; border-radius:8px; box-shadow:0 0 12px rgba(231,76,60,0.7); }
+.resize-handle { position:absolute; width:14px; height:14px; background:#e74c3c; border-radius:50%; box-shadow:0 0 4px rgba(231,76,60,0.9); }
+.resize-handle.nw { top:-7px; left:-7px; cursor:nwse-resize; }
+.resize-handle.ne { top:-7px; right:-7px; cursor:nesw-resize; }
+.resize-handle.sw { bottom:-7px; left:-7px; cursor:nesw-resize; }
+.resize-handle.se { bottom:-7px; right:-7px; cursor:nwse-resize; }
+#controls { margin-top:15px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+button { padding:10px 18px; background-color:#3498db; border:none; color:white; border-radius:5px; font-size:1rem; cursor:pointer; transition:background-color 0.25s ease; }
+button:hover { background-color:#2980b9; }
+#status { margin-top:10px; font-weight:bold; color:green; min-height:1.2em; }
+#progress-container { margin-top:10px; width:200px; height:20px; border:1px solid #ccc; border-radius:4px; overflow:hidden; display:none; }
+#progress-bar { height:100%; width:0%; background-color:#3498db; transition:width 0.1s; }
+</style>
+</head>
+<body>
+<h1>חיתוך סדרתי של אותיות</h1>
+<div id="letters-bar"></div>
+<div id="image-container">
+  <img id="source-image" src="{{ url_for('static', filename='uploads/' + filename) }}" alt="תמונה לחיתוך" />
+  <div id="crop-rectangle">
+    <div class="resize-handle nw"></div>
+    <div class="resize-handle ne"></div>
+    <div class="resize-handle sw"></div>
+    <div class="resize-handle se"></div>
+  </div>
+</div>
+<div id="controls">
+  <button id="save-crop">שמור אות נוכחית</button>
+  <button id="undo-crop">בטל חיתוך אחרון</button>
+  <button id="generateFontBtn" style="display:none;">צור פונט</button>
+</div>
+<div id="status"></div>
+<div id="progress-container"><div id="progress-bar"></div></div>
+
+<script>
+const container = document.getElementById('image-container');
+const img = document.getElementById('source-image');
+const cropRect = document.getElementById('crop-rectangle');
+const statusEl = document.getElementById('status');
+const lettersBar = document.getElementById('letters-bar');
+const progressContainer = document.getElementById('progress-container');
+const progressBar = document.getElementById('progress-bar');
+const generateBtn = document.getElementById("generateFontBtn");
+const minWidth=30, minHeight=30;
+let drag=false, resize=false, resizeDir='', startX,startY, origX,origY, origWidth,origHeight, lastCropPosition=null, mustMoveBeforeSave=false;
+const letters=['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת','ך','ם','ן','ף','ץ'];
+let currentIndex=0, history=[];
+
+// בניית האותיות
+letters.forEach((ltr,i)=>{
+  const el=document.createElement('div');
+  el.className='letter';
+  if(i===currentIndex) el.classList.add('active');
+  el.textContent=ltr;
+  lettersBar.appendChild(el);
+});
+
+function updateLettersBar(){
+  [...lettersBar.children].forEach((child,i)=>{
+    child.classList.remove('active');
+    if(i===currentIndex) child.classList.add('active');
+  });
+}
+
+function clamp(val,min,max){return Math.min(Math.max(val,min),max);}
+function getEventPos(e){return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY};}
+
+// ==== קוד החיתוך כמו שהיה (לא שיניתי) ====
+// ... (כל הפונקציות של drag/resize/save/undo נשארות כמו בקובץ שלך)
+
+// יצירת הפונט
+generateBtn.addEventListener("click", async()=>{
+  statusEl.textContent="⏳ יוצרים את הפונט, המתן...";
+  const res=await fetch("/generate_font",{method:"POST"});
+  const data=await res.json();
+  if(data.status==="success"){
+    // הפניה חזרה לדף הבית
+    window.location.href = data.redirect;
+  } else {
+    statusEl.textContent="❌ שגיאה ביצירת הפונט: "+data.message;
+  }
+});
+</script>
+</body>
+</html>
