@@ -1,42 +1,46 @@
 import os
-from PIL import Image
 import subprocess
+from PIL import Image
 
-def convert_to_svg(input_dir, output_dir):
-    os.makedirs(output_dir, exist_ok=True)
+def convert_png_to_svg(input_path, output_path):
+    """
+    פונקציה לייבוא בקוד: ממירה PNG ל-SVG באמצעות Potrace.
+    """
+    bmp_path = input_path.replace(".png", ".bmp")
+    Image.open(input_path).save(bmp_path)
 
-    for fname in os.listdir(input_dir):
-        if not fname.lower().endswith(".png"):
-            continue
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-        # שם האות לפי שם הקובץ (למשל: "23_final_mem" → "final_mem")
-        letter_name = os.path.splitext(fname)[0].split("_", 1)[-1]
+    try:
+        subprocess.run([
+            "potrace", bmp_path,
+            "--svg", "-o", output_path
+        ], check=True)
+        print(f"✅ {input_path} → {output_path}")
+    except subprocess.CalledProcessError:
+        print(f"❌ שגיאה בהמרת {input_path}")
+    finally:
+        if os.path.exists(bmp_path):
+            os.remove(bmp_path)
+    return output_path
 
-        input_path = os.path.join(input_dir, fname)
-        bmp_path   = input_path.replace(".png", ".bmp")
-        svg_path   = os.path.join(output_dir, fname.replace(".png", ".svg"))
 
-        # המרה ל־BMP
-        img = Image.open(input_path).convert("1")
-        img.save(bmp_path)
+def convert_to_svg(input_dir_or_file, output_dir_or_file):
+    if os.path.isfile(input_dir_or_file):
+        return convert_png_to_svg(input_dir_or_file, output_dir_or_file)
+    elif os.path.isdir(input_dir_or_file):
+        os.makedirs(output_dir_or_file, exist_ok=True)
+        for fname in os.listdir(input_dir_or_file):
+            if fname.lower().endswith(".png"):
+                convert_png_to_svg(
+                    os.path.join(input_dir_or_file, fname),
+                    os.path.join(output_dir_or_file, fname.replace(".png", ".svg"))
+                )
 
-        # המרה ל־SVG עם potrace
-        subprocess.run(["potrace", bmp_path, "-s", "-o", svg_path])
 
-        # הוספת ID לפי שם האות
-        with open(svg_path, "r", encoding="utf-8") as f:
-            svg_content = f.read()
-
-        # בדיקה אם קיים תג <path>
-        if "<path" not in svg_content:
-            print(f"⚠️ קובץ {svg_path} לא מכיל תג <path>, מוסיף תג ריק")
-            svg_content = svg_content.replace("</svg>", f'<path id="{letter_name}" d="" />\n</svg>')
-        else:
-            svg_content = svg_content.replace("<path", f'<path id="{letter_name}"', 1)
-
-        with open(svg_path, "w", encoding="utf-8") as f:
-            f.write(svg_content)
-
-        print(f"✅ SVG: {fname} → {svg_path}")
-
-        os.remove(bmp_path)
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) != 3:
+        print("שימוש: python svg_converter.py <input_path> <output_path>")
+        sys.exit(1)
+    convert_to_svg(sys.argv[1], sys.argv[2])
