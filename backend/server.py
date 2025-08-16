@@ -1,105 +1,160 @@
-from flask import Flask, request, render_template, send_file, url_for, redirect
 import os
+import base64
+import shutil
+from flask import Flask, render_template, request, jsonify, url_for, send_file, redirect
+from werkzeug.utils import secure_filename
+
+# פונקציות עיבוד
+from process_image import convert_to_black_white, normalize_and_center_glyph
+from generate_font import generate_ttf
+from svg_converter import convert_png_to_svg
 from split_letters import split_letters_from_image
 from bw_converter import convert_to_bw
-from svg_converter import convert_to_svg
-from generate_font import generate_ttf
 
 # תשלום
 from create_payment import create_low_profile_payment
 from urllib.parse import parse_qs
 
-# ---- תיקיות עבודה ----
+# --- נתיבי בסיס ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
-SPLIT_FOLDER  = os.path.join(BASE_DIR, 'split_letters_output')
-BW_FOLDER     = os.path.join(BASE_DIR, 'bw_letters')
-SVG_FOLDER    = os.path.join(BASE_DIR, 'svg_letters')
+TEMPLATE_DIR = os.path.join(BASE_DIR, '..', 'frontend', 'templates')
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+
+# תיקיות עבודה
+UPLOADS_DIR   = os.path.join(STATIC_DIR, 'uploads')
+PROCESSED_DIR = os.path.join(STATIC_DIR, 'processed')
+GLYPHS_DIR    = os.path.join(STATIC_DIR, 'glyphs')
+BW_DIR        = os.path.join(STATIC_DIR, 'bw')
+SVG_DIR       = os.path.join(STATIC_DIR, 'svg_letters')
 EXPORT_FOLDER = os.path.join(BASE_DIR, '..', 'exports')
 FONT_OUTPUT_PATH = os.path.join(EXPORT_FOLDER, 'my_font.ttf')
 
-# ודא שהתיקיות קיימות
-for d in (UPLOAD_FOLDER, SPLIT_FOLDER, BW_FOLDER, SVG_FOLDER, EXPORT_FOLDER):
+for d in (UPLOADS_DIR, PROCESSED_DIR, GLYPHS_DIR, BW_DIR, SVG_DIR, EXPORT_FOLDER):
     os.makedirs(d, exist_ok=True)
 
-# אתחול Flask עם תיקיית התבניות
-TEMPLATE_DIR = os.path.join(BASE_DIR, '..', 'frontend', 'templates')
-app = Flask(__name__, template_folder=TEMPLATE_DIR)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SPLIT_FOLDER']  = SPLIT_FOLDER
-app.config['BW_FOLDER']     = BW_FOLDER
-app.config['SVG_FOLDER']    = SVG_FOLDER
+app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
+
+# סדר האותיות
+LETTERS_ORDER = [
+    "alef","bet","gimel","dalet","he","vav","zayin","het","tet",
+    "yod","kaf","lamed","mem","nun","samekh","ayin","pe","tsadi",
+    "qof","resh","shin","tav","finalkaf","finalmem","finalnun",
+    "finalpe","finaltsadi"
+]
 
 # ----------------------
-# 🔠 דף הבית + העלאה
+# 🔠 דף הבית
 # ----------------------
-
 @app.route('/')
 def index():
-    return render_template('index.html')
+    font_ready = os.path.exists(FONT_OUTPUT_PATH)
+    return render_template('index.html', font_ready=font_ready)
 
+# ----------------------
+# 📤 העלאת תמונה → חיתוך ידני
+# ----------------------
 @app.route('/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
+def upload():
+    if 'image' not in request.files:
         return render_template('index.html', error='לא נשלח קובץ')
 
-    file = request.files['file']
-    if file.filename == '':
+    f = request.files['image']
+    if f.filename == '':
         return render_template('index.html', error='לא נבחר קובץ')
 
-    filepath = os.path.join(UPLOAD_FOLDER, file.filename)
-    file.save(filepath)
+    filename = secure_filename(f.filename)
+    input_path = os.path.join(UPLOADS_DIR, filename)
+    f.save(input_path)
 
+    # המרה פשוטה לשחור-לבן
+    processed_name = f"proc_{filename}"
+    processed_path = os.path.join(PROCESSED_DIR, processed_name)
+    convert_to_black_white(input_path, processed_path)
+
+    # שמירה להצגה
+    shutil.copy(processed_path, os.path.join(STATIC_DIR, 'uploads', processed_name))
+
+    return render_template('crop.html', filename=processed_name)
+
+# ----------------------
+# ✂️ שמירת אות חתוכה
+# ----------------------
+@app.route('/backend/save_crop', methods=['POST'])
+def save_crop():
     try:
-        split_letters_from_image(filepath, output_dir=SPLIT_FOLDER)
-        convert_to_bw(input_dir=SPLIT_FOLDER, output_dir=BW_FOLDER)
-        convert_to_svg(input_dir=BW_FOLDER, output_dir=SVG_FOLDER)
-        font_created = generate_ttf(svg_folder=SVG_FOLDER, output_ttf=FONT_OUTPUT_PATH)
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "no json"}), 400
 
-        cutting_done = len(os.listdir(SPLIT_FOLDER)) > 0
-        bw_done      = len(os.listdir(BW_FOLDER)) > 0
-        svg_done     = len(os.listdir(SVG_FOLDER)) > 0
+        index = data.get('index')
+        imageData = data.get('data')
 
-        print(f"✂️ חיתוך אותיות:     {'הושלם' if cutting_done else 'נכשל'}")
-        print(f"🖤 המרה לשחור־לבן:   {'הושלם' if bw_done else 'נכשל'}")
-        print(f"🟢 המרה ל־SVG:      {'הושלם' if svg_done else 'נכשל'}")
-        print(f"🔠 יצירת פונט:       {'הושלם' if font_created else 'נכשל'}")
+        if index is None or imageData is None:
+            return jsonify({"error": "missing fields"}), 400
 
-        return render_template(
-            'index.html',
-            cutting_done=cutting_done,
-            bw_done=bw_done,
-            svg_done=svg_done,
-            font_created=font_created
-        )
+        index = int(index)
+        eng_name = LETTERS_ORDER[index]
 
+        # המרה מבסיס64 ל־PNG
+        _, b64 = imageData.split(',', 1)
+        binary = base64.b64decode(b64)
+        tmp_path = os.path.join(PROCESSED_DIR, f"tmp_{eng_name}.png")
+        with open(tmp_path, 'wb') as fh:
+            fh.write(binary)
+
+        # שמירה ל־glyphs
+        out_path = os.path.join(GLYPHS_DIR, f"{eng_name}.png")
+        shutil.copy(tmp_path, out_path)
+
+        # שמירה ל־BW
+        bw_out = os.path.join(BW_DIR, f"{eng_name}.png")
+        shutil.copy(tmp_path, bw_out)
+
+        # המרה ל־SVG
+        svg_out = os.path.join(SVG_DIR, f"{eng_name}.svg")
+        convert_png_to_svg(bw_out, svg_out)
+
+        return jsonify({"saved": f"{eng_name}.png"})
     except Exception as e:
-        print("❌ שגיאה בתהליך:", str(e))
-        return render_template('index.html', error=f"שגיאה: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
-@app.route('/download')
+# ----------------------
+# 🔠 יצירת פונט
+# ----------------------
+@app.route('/generate_font', methods=['POST'])
+def generate_font_route():
+    try:
+        success, _ = generate_ttf(svg_folder=SVG_DIR, output_ttf=FONT_OUTPUT_PATH)
+        if success:
+            return redirect(url_for('index'))
+        else:
+            return render_template('index.html', error='כישלון ביצירת הפונט')
+    except Exception as e:
+        return render_template('index.html', error=str(e))
+
+# ----------------------
+# ⬇️ הורדת פונט
+# ----------------------
+@app.route('/download_font')
 def download_font():
     if os.path.exists(FONT_OUTPUT_PATH):
-        return send_file(
-            FONT_OUTPUT_PATH,
-            as_attachment=True,
-            download_name='my_font.ttf',
-            mimetype='font/ttf'
-        )
-    return render_template('index.html', error='הפונט לא קיים להורדה'), 404
+        return send_file(FONT_OUTPUT_PATH, as_attachment=True, download_name="my_font.ttf", mimetype="font/ttf")
+    return "הפונט עדיין לא נוצר", 404
 
 # ----------------------
 # 📄 דפי מידע
 # ----------------------
-
 @app.route('/instructions')
 def instructions():
     return render_template('instructions.html')
 
+@app.route('/faq')
+def faq():
+    return render_template('faq.html')
+
 # ----------------------
 # 💳 תשלום
 # ----------------------
-
 @app.route('/payment')
 def payment():
     return render_template('payment.html')
@@ -124,36 +179,19 @@ def start_payment():
     except Exception as e:
         return f"שגיאה בעת יצירת התשלום: {str(e)}", 500
 
-# ----------------------
-# 📬 Webhook – קבלת תוצאה מקרדקום
-# ----------------------
-
 @app.route('/cardcom-indicator', methods=['GET', 'POST'])
 def cardcom_indicator():
     print("📬 קיבלנו הודעה מקרדקום:")
     print("🔹 שיטה:", request.method)
-
     data = request.form.to_dict() if request.method == 'POST' else request.args.to_dict()
-
     for key, value in data.items():
         print(f"{key}: {value}")
-    
     return "OK"
-
-# ----------------------
-# 🎉 דף תודה לאחר תשלום
-# ----------------------
 
 @app.route('/thankyou')
 def thankyou():
     return render_template('thankyou.html')
 
-@app.route('/faq')
-def faq():
-    return render_template('faq.html')
-
-
 # ----------------------
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
