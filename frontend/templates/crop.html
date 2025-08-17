@@ -48,7 +48,11 @@ button:hover { background-color:#2980b9; }
 <div id="controls">
   <button id="save-crop">שמור אות נוכחית</button>
   <button id="undo-crop">בטל חיתוך אחרון</button>
-  <button id="generateFontBtn" style="display:none;">צור פונט</button>
+  {% if font_ready %}
+    <form action="{{ url_for('generate_font_route') }}" method="post" style="display:inline;">
+      <button type="submit">צור פונט</button>
+    </form>
+  {% endif %}
 </div>
 
 <div id="status"></div>
@@ -62,7 +66,6 @@ const statusEl = document.getElementById('status');
 const lettersBar = document.getElementById('letters-bar');
 const progressContainer = document.getElementById('progress-container');
 const progressBar = document.getElementById('progress-bar');
-const generateBtn = document.getElementById("generateFontBtn");
 const minWidth=30, minHeight=30;
 let drag=false, resize=false, resizeDir='', startX,startY, origX,origY, origWidth,origHeight, lastCropPosition=null, mustMoveBeforeSave=false;
 const letters=['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת','ך','ם','ן','ף','ץ'];
@@ -86,20 +89,6 @@ function updateLettersBar(){
 
 function clamp(val,min,max){return Math.min(Math.max(val,min),max);}
 function getEventPos(e){return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY};}
-
-// ==== שאר הפונקציות נשארות ללא שינוי ====
-
-// יצירת הפונט
-generateBtn.addEventListener("click", async()=>{
-  statusEl.textContent="⏳ יוצרים את הפונט, המתן...";
-  const res=await fetch("/generate_font",{method:"POST"});
-  const data=await res.json();
-  if(data.status==="success"){
-    window.location.href = data.redirect;
-  } else {
-    statusEl.textContent="❌ שגיאה ביצירת הפונט: "+data.message;
-  }
-});
 </script>
 </body>
 </html>
