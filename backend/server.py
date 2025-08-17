@@ -73,7 +73,15 @@ def upload():
     # שמירה להצגה
     shutil.copy(processed_path, os.path.join(STATIC_DIR, 'uploads', processed_name))
 
-    return render_template('crop.html', filename=processed_name)
+    # אחרי העלאה מפנים לדף crop
+    return redirect(url_for('crop'))
+
+# ----------------------
+# ✂️ דף חיתוך ידני
+# ----------------------
+@app.route('/crop')
+def crop():
+    return render_template('crop.html')
 
 # ----------------------
 # ✂️ שמירת אות חתוכה
