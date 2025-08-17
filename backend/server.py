@@ -32,7 +32,7 @@ for d in (UPLOADS_DIR, PROCESSED_DIR, GLYPHS_DIR, BW_DIR, SVG_DIR, EXPORT_FOLDER
     os.makedirs(d, exist_ok=True)
 
 app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')  # עבור session
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')  # session
 
 # סדר האותיות
 LETTERS_ORDER = [
@@ -51,7 +51,7 @@ def index():
     return render_template('index.html', font_ready=font_ready)
 
 # ----------------------
-# 📤 העלאת תמונה → חיתוך ידני
+# 📤 העלאת תמונה → POST בלבד
 # ----------------------
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -66,17 +66,16 @@ def upload():
     input_path = os.path.join(UPLOADS_DIR, filename)
     f.save(input_path)
 
-    # --- גרסה ראשונה: שמירה פשוטה (convert_to_black_white) ---
+    # גרסה ראשונה: שמירה פשוטה (convert_to_black_white)
     bw_name = f"bw_{filename}"
     bw_path = os.path.join(PROCESSED_DIR, bw_name)
     convert_to_black_white(input_path, bw_path, filename=bw_name)
 
-    # --- גרסה שנייה: מנורמלת + ממורכזת ---
+    # גרסה שנייה: מנורמלת + ממורכזת
     processed_name = f"proc_{filename}"
     processed_path = os.path.join(PROCESSED_DIR, processed_name)
     normalize_and_center_glyph(input_path, processed_path, filename=processed_name)
 
-    # נעדיף להמשיך עם הגרסה המנורמלת
     session['last_filename'] = processed_name
     print(f"[upload] saved bw -> {bw_name}, normalized -> {processed_name}")
 
@@ -84,17 +83,12 @@ def upload():
     return redirect(url_for('crop', filename=processed_name))
 
 # ----------------------
-# ✂️ דף חיתוך ידני (עם נפילה-אחורית אם חסר filename)
+# ✂️ דף חיתוך ידני
 # ----------------------
 @app.route('/crop')
 def crop():
-    filename = request.args.get('filename')
+    filename = request.args.get('filename') or session.get('last_filename')
 
-    # אם אין בפרמטרים – ננסה מה-session
-    if not filename:
-        filename = session.get('last_filename')
-
-    # אם עדיין אין – ננסה לבחור את הקובץ המעובד האחרון מתיקיית uploads
     if not filename:
         try:
             candidates = [
@@ -102,7 +96,6 @@ def crop():
                 if os.path.isfile(os.path.join(UPLOADS_DIR, f)) and f.startswith('proc_')
             ]
             if candidates:
-                # לבחור את האחרון לפי זמן שינוי
                 candidates.sort(key=lambda n: os.path.getmtime(os.path.join(UPLOADS_DIR, n)), reverse=True)
                 filename = candidates[0]
                 session['last_filename'] = filename
@@ -111,10 +104,8 @@ def crop():
             print(f"[crop] fallback scan error: {e}")
 
     if not filename:
-        # אין מה להציג
         return render_template('crop.html', error="אין תמונה זמינה לחיתוך")
 
-    # יש קובץ – לוודא שהוא באמת קיים ב-static/uploads
     path_check = os.path.join(UPLOADS_DIR, filename)
     if not os.path.exists(path_check):
         print(f"[crop] requested filename not found on disk: {filename}")
