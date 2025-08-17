@@ -163,6 +163,7 @@ def generate_font_route():
     try:
         success, _ = generate_ttf(svg_folder=SVG_DIR, output_ttf=FONT_OUTPUT_PATH)
         if success:
+            # 🔹 אחרי יצירת הפונט – חזרה אוטומטית לדף הבית
             return redirect(url_for('index'))
         else:
             return render_template('index.html', error='כישלון ביצירת הפונט')
@@ -179,7 +180,7 @@ def download_font():
     return "הפונט עדיין לא נוצר", 404
 
 # ----------------------
-# 📄 דפי מידע
+# דפי מידע ותשלום נשארים כפי שהם
 # ----------------------
 @app.route('/instructions')
 def instructions():
@@ -189,9 +190,6 @@ def instructions():
 def faq():
     return render_template('faq.html')
 
-# ----------------------
-# 💳 תשלום
-# ----------------------
 @app.route('/payment')
 def payment():
     return render_template('payment.html')
