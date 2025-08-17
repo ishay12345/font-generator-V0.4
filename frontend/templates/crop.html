@@ -47,7 +47,8 @@
   <div id="controls" {% if not filename %}style="display:none;"{% endif %}>
     <button id="save-crop">שמור אות נוכחית</button>
     <button id="undo-crop">בטל חיתוך אחרון</button>
-    <button id="generateFontBtn" style="display:none;">צור פונט</button>
+    <!-- הכפתור החדש מפעיל את createFont -->
+    <button id="generateFontBtn" style="display:none;" onclick="createFont()">צור פונט</button>
     <a id="downloadFontBtn" href="#" download style="display:none;">⬇ הורד את הפונט</a>
   </div>
   <div id="status"></div>
@@ -150,7 +151,6 @@
       e.preventDefault();
       const pos=getEventPos(e);
       let dx=pos.x-startX, dy=pos.y-startY;
-      const imgRect=img.getBoundingClientRect();
       let newLeft=parseInt(cropRect.style.left), newTop=parseInt(cropRect.style.top), newWidth=origWidth, newHeight=origHeight;
       if(resizeDir.includes('n')){ newTop += dy; newHeight -= dy; }
       if(resizeDir.includes('w')){ newLeft += dx; newWidth -= dx; }
@@ -225,17 +225,20 @@
       updateLettersBar();
     });
 
-    // Generate font
-    generateBtn.addEventListener("click", async()=>{
-      statusEl.textContent="⏳ יוצרים את הפונט, המתן...";
-      const res=await fetch("/generate_font",{method:"POST"});
-      const data=await res.json();
-      if(data.status==="success"){
-        downloadBtn.href=data.download_url;
-        downloadBtn.style.display="inline-block";
-        statusEl.textContent="🎉 הפונט מוכן! לחץ על הורדה להורדת הפונט.";
-      } else statusEl.textContent="❌ שגיאה ביצירת הפונט: "+data.message;
-    });
+    // === פונקציה חדשה ===
+    async function createFont() {
+      const status = document.getElementById('status');
+      status.textContent = "📦 יוצרים את הפונט... בעוד רגע תועברו לדף הבית, תודה על הסבלנות 🙏";
+
+      // קריאה לשרת שתייצר את הפונט
+      fetch("/generate-font", { method: "POST" })
+        .catch(err => console.error("⚠️ שגיאה ביצירת הפונט:", err));
+
+      // בלי לחכות - אחרי 3 שניות שולחים לדף הבית
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 3000);
+    }
     {% endif %}
   </script>
 </body>
