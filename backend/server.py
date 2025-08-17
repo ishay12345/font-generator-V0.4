@@ -1,7 +1,7 @@
 import os
 import base64
 import shutil
-from flask import Flask, render_template, request, jsonify, url_for, send_file
+from flask import Flask, render_template, request, jsonify, url_for, send_file, redirect, session
 from werkzeug.utils import secure_filename
 
 # פונקציות עיבוד
@@ -32,6 +32,7 @@ for d in (UPLOADS_DIR, PROCESSED_DIR, GLYPHS_DIR, BW_DIR, SVG_DIR, EXPORT_FOLDER
     os.makedirs(d, exist_ok=True)
 
 app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')  # עבור session
 
 # סדר האותיות
 LETTERS_ORDER = [
@@ -71,19 +72,53 @@ def upload():
     convert_to_black_white(input_path, processed_path)
 
     # שמירה להצגה בתיקיית static/uploads
-    shutil.copy(processed_path, os.path.join(UPLOADS_DIR, processed_name))
+    dest_path = os.path.join(UPLOADS_DIR, processed_name)
+    shutil.copy(processed_path, dest_path)
 
-    # ✅ שינוי: מחזירים ישירות crop.html עם filename
-    return render_template('crop.html', filename=processed_name, font_ready=os.path.exists(FONT_OUTPUT_PATH))
+    # שמירת שם הקובץ האחרון ב-session
+    session['last_filename'] = processed_name
+    print(f"[upload] saved and processed -> {processed_name}")
+
+    # redirect ל-crop עם query string של filename
+    return redirect(url_for('crop', filename=processed_name))
 
 # ----------------------
-# ✂️ דף חיתוך ידני
+# ✂️ דף חיתוך ידני (עם נפילה-אחורית אם חסר filename)
 # ----------------------
 @app.route('/crop')
 def crop():
     filename = request.args.get('filename')
+
+    # אם אין בפרמטרים – ננסה מה-session
     if not filename:
+        filename = session.get('last_filename')
+
+    # אם עדיין אין – ננסה לבחור את הקובץ המעובד האחרון מתיקיית uploads
+    if not filename:
+        try:
+            candidates = [
+                f for f in os.listdir(UPLOADS_DIR)
+                if os.path.isfile(os.path.join(UPLOADS_DIR, f)) and f.startswith('proc_')
+            ]
+            if candidates:
+                # לבחור את האחרון לפי זמן שינוי
+                candidates.sort(key=lambda n: os.path.getmtime(os.path.join(UPLOADS_DIR, n)), reverse=True)
+                filename = candidates[0]
+                session['last_filename'] = filename
+                print(f"[crop] fallback picked latest processed: {filename}")
+        except Exception as e:
+            print(f"[crop] fallback scan error: {e}")
+
+    if not filename:
+        # אין מה להציג
         return render_template('crop.html', error="אין תמונה זמינה לחיתוך")
+
+    # יש קובץ – לוודא שהוא באמת קיים ב-static/uploads
+    path_check = os.path.join(UPLOADS_DIR, filename)
+    if not os.path.exists(path_check):
+        print(f"[crop] requested filename not found on disk: {filename}")
+        return render_template('crop.html', error="התמונה המבוקשת לא נמצאה בדיסק")
+
     return render_template('crop.html', filename=filename, font_ready=os.path.exists(FONT_OUTPUT_PATH))
 
 # ----------------------
