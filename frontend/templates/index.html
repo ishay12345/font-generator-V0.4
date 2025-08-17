@@ -143,7 +143,7 @@
       cursor: not-allowed;
     }
 
-    #download-btn:disabled {
+    #download-btn[disabled] {
       background: #888;
       pointer-events: none;
     }
@@ -241,9 +241,16 @@
 
     <div id="status"></div>
 
-    <a id="download-btn" href="/payment">
-      🔒 הורד את הפונט ב־24.90 ₪ לשימוש מלא
-    </a>
+    <!-- כפתור ההורדה תלוי במצב הפונט -->
+    {% if font_ready %}
+      <a id="download-btn" href="/payment">
+        ⬇️ הורד את הפונט שלך עכשיו
+      </a>
+    {% else %}
+      <a id="download-btn" href="#" disabled>
+        🔒 הורד את הפונט ב־24.90 ₪ לשימוש מלא
+      </a>
+    {% endif %}
 
     <div class="page-link" onclick="window.location.href='/instructions'">
       איך מעלים את התמונה? 📷
@@ -313,7 +320,6 @@
           submitBtn.textContent = 'שלח תמונה';
           submitBtn.disabled = false;
         } else {
-          // redirect שהשרת החזיר
           status.textContent = '✔️ התמונה הועלתה בהצלחה!';
           window.location.href = res.url;
         }
