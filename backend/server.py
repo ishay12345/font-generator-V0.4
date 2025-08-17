@@ -73,8 +73,8 @@ def upload():
     # שמירה להצגה בתיקיית static/uploads
     shutil.copy(processed_path, os.path.join(UPLOADS_DIR, processed_name))
 
-    # **שליחה ישירה ל-crop.html עם filename**
-    return render_template('crop.html', filename=processed_name, font_ready=os.path.exists(FONT_OUTPUT_PATH))
+    # **שינוי חשוב**: redirect ל-crop עם query string של filename
+    return redirect(url_for('crop', filename=processed_name))
 
 # ----------------------
 # ✂️ דף חיתוך ידני
@@ -84,7 +84,7 @@ def crop():
     filename = request.args.get('filename')
     if not filename:
         return render_template('crop.html', error="אין תמונה זמינה לחיתוך")
-    return render_template('crop.html', filename=filename)
+    return render_template('crop.html', filename=filename, font_ready=os.path.exists(FONT_OUTPUT_PATH))
 
 # ----------------------
 # ✂️ שמירת אות חתוכה
