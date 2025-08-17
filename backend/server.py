@@ -1,7 +1,7 @@
 import os
 import base64
 import shutil
-from flask import Flask, render_template, request, jsonify, url_for, send_file, redirect
+from flask import Flask, render_template, request, jsonify, url_for, send_file
 from werkzeug.utils import secure_filename
 
 # פונקציות עיבוד
@@ -73,8 +73,8 @@ def upload():
     # שמירה להצגה בתיקיית static/uploads
     shutil.copy(processed_path, os.path.join(UPLOADS_DIR, processed_name))
 
-    # **שינוי חשוב**: redirect ל-crop עם query string של filename
-    return redirect(url_for('crop', filename=processed_name))
+    # ✅ שינוי: מחזירים ישירות crop.html עם filename
+    return render_template('crop.html', filename=processed_name, font_ready=os.path.exists(FONT_OUTPUT_PATH))
 
 # ----------------------
 # ✂️ דף חיתוך ידני
