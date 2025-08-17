@@ -5,29 +5,193 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>חיתוך סדרתי של אותיות</title>
   <style>
-    html, body { margin:0; padding:0; font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background:#fff; color:#222; display:flex; flex-direction:column; align-items:center; }
-    h1 { margin:10px; }
-    #letters-bar { display:flex; flex-wrap:wrap; justify-content:center; max-width:90vw; margin:10px 0; gap:5px; }
-    .letter { padding:6px 10px; border:2px solid #ccc; border-radius:5px; cursor:pointer; user-select:none; background-color:#f7f7f7; }
-    .letter.done { background-color:#2ecc71; color:white; border-color:#27ae60; }
-    .letter.active { border-color:#3498db; background-color:#ecf6fb; }
-    #image-container { position:relative; max-width:90vw; max-height:70vh; border:1px solid #ccc; display:flex; justify-content:center; align-items:center; user-select:none; touch-action:none; }
-    #source-image { display:block; max-width:100%; max-height:70vh; object-fit:contain; }
-    #crop-rectangle { position:absolute; border:3px dashed #e74c3c; background:rgba(231,76,60,0.15); top:40px; left:40px; width:180px; height:180px; box-sizing:border-box; cursor:move; border-radius:8px; box-shadow:0 0 12px rgba(231,76,60,0.7); }
-    .resize-handle { position:absolute; width:14px; height:14px; background:#e74c3c; border-radius:50%; box-shadow:0 0 4px rgba(231,76,60,0.9); }
-    .resize-handle.nw { top:-7px; left:-7px; cursor:nwse-resize; }
-    .resize-handle.ne { top:-7px; right:-7px; cursor:nesw-resize; }
-    .resize-handle.sw { bottom:-7px; left:-7px; cursor:nesw-resize; }
-    .resize-handle.se { bottom:-7px; right:-7px; cursor:nwse-resize; }
-    #controls { margin-top:15px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
-    button { padding:10px 18px; background-color:#3498db; border:none; color:white; border-radius:5px; font-size:1rem; cursor:pointer; transition:background-color 0.25s ease; }
-    button:hover { background-color:#2980b9; }
-    #status { margin-top:10px; font-weight:bold; color:green; min-height:1.2em; }
-    #progress-container { margin-top:10px; width:200px; height:20px; border:1px solid #ccc; border-radius:4px; overflow:hidden; display:none; }
-    #progress-bar { height:100%; width:0%; background-color:#3498db; transition:width 0.1s; }
+    /* רקע דינמי */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #9138e5, #3498db, #ff333d, #ffcb57);
+      background-size: 300% 300%;
+      animation: gradientMove 15s ease infinite;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      position: relative;
+    }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      margin: 15px;
+      font-size: 2rem;
+      text-shadow: 0 0 8px rgba(0,0,0,0.5), 0 0 15px rgba(255,255,255,0.6);
+    }
+
+    /* בר האותיות */
+    #letters-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 90vw;
+      margin: 10px 0;
+      gap: 8px;
+    }
+    .letter {
+      padding: 8px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      user-select: none;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(6px);
+      color: #fff;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .letter:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 10px rgba(255,255,255,0.7);
+    }
+    .letter.done {
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      border: none;
+      color: white;
+      box-shadow: 0 0 12px rgba(46,204,113,0.9);
+    }
+    .letter.active {
+      border: 2px solid #fff;
+      background: rgba(52,152,219,0.6);
+      box-shadow: 0 0 15px rgba(52,152,219,0.9);
+    }
+
+    /* קונטיינר תמונה */
+    #image-container {
+      position: relative;
+      max-width: 90vw;
+      max-height: 70vh;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+      touch-action: none;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    }
+    #source-image {
+      display: block;
+      max-width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+    #crop-rectangle {
+      position: absolute;
+      border: 3px dashed #ff5555;
+      background: rgba(255,85,85,0.15);
+      top: 40px;
+      left: 40px;
+      width: 180px;
+      height: 180px;
+      box-sizing: border-box;
+      cursor: move;
+      border-radius: 12px;
+      box-shadow: 0 0 18px rgba(255,85,85,0.7);
+    }
+    .resize-handle {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: #ff5555;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(255,85,85,0.9);
+    }
+    .resize-handle.nw { top:-8px; left:-8px; cursor:nwse-resize; }
+    .resize-handle.ne { top:-8px; right:-8px; cursor:nesw-resize; }
+    .resize-handle.sw { bottom:-8px; left:-8px; cursor:nesw-resize; }
+    .resize-handle.se { bottom:-8px; right:-8px; cursor:nwse-resize; }
+
+    /* כפתורים */
+    #controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    button, a#downloadFontBtn {
+      padding: 12px 22px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(135deg, #3498db, #9b59b6);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(6px);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    button:hover, a#downloadFontBtn:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.45);
+      background: linear-gradient(135deg, #2980b9, #8e44ad);
+    }
+
+    /* סטטוס */
+    #status {
+      margin-top: 12px;
+      font-weight: bold;
+      color: #ffeb3b;
+      min-height: 1.2em;
+      text-shadow: 0 0 8px rgba(0,0,0,0.6);
+    }
+
+    /* progress bar */
+    #progress-container {
+      margin-top: 12px;
+      width: 220px;
+      height: 22px;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 12px;
+      overflow: hidden;
+      display: none;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00c6ff, #ff6b6b, #fddb92);
+      background-size: 300% 300%;
+      animation: gradientMove 5s linear infinite;
+      transition: width 0.2s ease;
+    }
+
+    /* FinisherHeader */
+    .finisher-header {
+      position: fixed;
+      top:0;
+      left:0;
+      width:100vw;
+      height:100vh;
+      z-index:-1;
+      overflow:hidden;
+    }
   </style>
 </head>
 <body>
+  <!-- אלמנט FinisherHeader -->
+  <div class="finisher-header"></div>
+
   <h1>חיתוך סדרתי של אותיות</h1>
   <div id="letters-bar"></div>
   <div id="image-container">
@@ -47,15 +211,29 @@
   <div id="controls" {% if not filename %}style="display:none;"{% endif %}>
     <button id="save-crop">שמור אות נוכחית</button>
     <button id="undo-crop">בטל חיתוך אחרון</button>
-    <!-- הכפתור החדש מפעיל את createFont -->
     <button id="generateFontBtn" style="display:none;" onclick="createFont()">צור פונט</button>
     <a id="downloadFontBtn" href="#" download style="display:none;">⬇ הורד את הפונט</a>
   </div>
   <div id="status"></div>
   <div id="progress-container"><div id="progress-bar"></div></div>
 
+  <script src="{{ url_for('static', filename='finisher-header.es5.min.js') }}"></script>
+  <script>
+    new FinisherHeader({
+      "count": 6,
+      "size": { "min": 1100, "max": 1300, "pulse": 0 },
+      "speed": { "x": { "min":0.1,"max":0.3 }, "y": { "min":0.1,"max":0.3 } },
+      "colors": { "background":"transparent", "particles":["#6bd6ff","#ffcb57","#ff333d"] },
+      "blending": "overlay",
+      "opacity": { "center":1,"edge":0.1 },
+      "skew": -2,
+      "shapes": ["c"]
+    });
+  </script>
+
   <script>
     {% if filename %}
+    // ================== חיתוך, Undo, Save, Letters, CreateFont ==================
     const container = document.getElementById('image-container');
     const img = document.getElementById('source-image');
     const cropRect = document.getElementById('crop-rectangle');
@@ -66,7 +244,7 @@
     const generateBtn = document.getElementById("generateFontBtn");
     const downloadBtn = document.getElementById("downloadFontBtn");
     const minWidth=30, minHeight=30;
-    let drag=false, resize=false, resizeDir='', startX,startY, origX,origY, origWidth,origHeight, lastCropPosition=null, mustMoveBeforeSave=false;
+    let drag=false, resize=false, resizeDir='', startX,startY, origX,origY, origWidth,origHeight, lastCropPosition=null;
     const letters=['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת','ך','ם','ן','ף','ץ'];
     let currentIndex=0, history=[];
 
@@ -78,14 +256,12 @@
       el.textContent=ltr;
       lettersBar.appendChild(el);
     });
-
     function updateLettersBar(){
       [...lettersBar.children].forEach((child,i)=>{
         child.classList.remove('active');
         if(i===currentIndex) child.classList.add('active');
       });
     }
-
     function clamp(val,min,max){return Math.min(Math.max(val,min),max);}
     function getEventPos(e){return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY};}
 
@@ -117,7 +293,6 @@
       newTop=clamp(newTop, imgRect.top, imgRect.bottom-cropRect.offsetHeight);
       cropRect.style.left=(newLeft-containerRect.left)+'px';
       cropRect.style.top=(newTop-containerRect.top)+'px';
-      mustMoveBeforeSave=false;
     }
     function stopDrag(){
       drag=false;
@@ -162,7 +337,6 @@
       cropRect.style.top=newTop+'px';
       cropRect.style.width=newWidth+'px';
       cropRect.style.height=newHeight+'px';
-      mustMoveBeforeSave=false;
     }
     function stopResize(){
       resize=false;
@@ -207,7 +381,6 @@
 
       history.push(currentIndex);
       lettersBar.children[currentIndex].classList.add('done');
-      mustMoveBeforeSave=true;
       currentIndex++;
       updateLettersBar();
       if(currentIndex>=letters.length){
@@ -225,20 +398,13 @@
       updateLettersBar();
     });
 
-    // === פונקציה חדשה ===
+    // יצירת פונט
     async function createFont() {
-      const status = document.getElementById('status');
-      status.textContent = "📦 יוצרים את הפונט... בעוד רגע תועברו לדף הבית, תודה על הסבלנות 🙏";
-
-      // קריאה לשרת שתייצר את הפונט
-      fetch("/generate-font", { method: "POST" })
-        .catch(err => console.error("⚠️ שגיאה ביצירת הפונט:", err));
-
-      // בלי לחכות - אחרי 3 שניות שולחים לדף הבית
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 3000);
+      statusEl.textContent = "📦 יוצרים את הפונט... בעוד רגע תועברו לדף הבית, תודה על הסבלנות 🙏";
+      fetch("/generate-font", { method: "POST" }).catch(err => console.error("⚠️ שגיאה ביצירת הפונט:", err));
+      setTimeout(() => { window.location.href = "/"; }, 3000);
     }
+
     {% endif %}
   </script>
 </body>
