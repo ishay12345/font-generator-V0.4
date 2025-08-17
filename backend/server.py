@@ -74,7 +74,7 @@ def upload():
     shutil.copy(processed_path, os.path.join(UPLOADS_DIR, processed_name))
 
     # העברה ל-crop עם filename
-    return redirect(url_for('crop', filename=processed_name))
+    return render_template('crop.html', filename=processed_name, font_ready=os.path.exists(FONT_OUTPUT_PATH))
 
 # ----------------------
 # ✂️ דף חיתוך ידני
