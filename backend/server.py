@@ -8,7 +8,6 @@ from werkzeug.utils import secure_filename
 from process_image import convert_to_black_white, normalize_and_center_glyph
 from generate_font import generate_ttf
 from svg_converter import convert_png_to_svg
-from split_letters import split_letters_from_image
 from bw_converter import convert_to_bw
 
 # תשלום
