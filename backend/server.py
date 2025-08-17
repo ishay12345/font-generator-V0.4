@@ -73,7 +73,7 @@ def upload():
     # שמירה להצגה בתיקיית static/uploads
     shutil.copy(processed_path, os.path.join(UPLOADS_DIR, processed_name))
 
-    # העברה ל-crop עם filename
+    # **שליחה ישירה ל-crop.html עם filename**
     return render_template('crop.html', filename=processed_name, font_ready=os.path.exists(FONT_OUTPUT_PATH))
 
 # ----------------------
