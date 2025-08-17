@@ -70,18 +70,21 @@ def upload():
     processed_path = os.path.join(PROCESSED_DIR, processed_name)
     convert_to_black_white(input_path, processed_path)
 
-    # שמירה להצגה
-    shutil.copy(processed_path, os.path.join(STATIC_DIR, 'uploads', processed_name))
+    # שמירה להצגה בתיקיית static/uploads
+    shutil.copy(processed_path, os.path.join(UPLOADS_DIR, processed_name))
 
-    # אחרי העלאה מפנים לדף crop
-    return redirect(url_for('crop'))
+    # העברה ל-crop עם filename
+    return redirect(url_for('crop', filename=processed_name))
 
 # ----------------------
 # ✂️ דף חיתוך ידני
 # ----------------------
 @app.route('/crop')
 def crop():
-    return render_template('crop.html')
+    filename = request.args.get('filename')
+    if not filename:
+        return render_template('crop.html', error="אין תמונה זמינה לחיתוך")
+    return render_template('crop.html', filename=filename)
 
 # ----------------------
 # ✂️ שמירת אות חתוכה
