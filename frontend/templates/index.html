@@ -118,7 +118,7 @@
       background: linear-gradient(45deg, #6bd6ff, #9138e5);
     }
 
-    button {
+    button, #download-btn {
       margin-top: 20px;
       background: linear-gradient(45deg, #6bd6ff, #9138e5);
       border: none;
@@ -129,12 +129,30 @@
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       transition: background 0.3s ease, transform 0.2s ease;
+      text-decoration: none;
       display: inline-block;
     }
 
-    button:hover {
+    button:hover, #download-btn:hover {
       transform: scale(1.05);
       background: linear-gradient(45deg, #ffcb57, #ff333d);
+    }
+
+    button:disabled {
+      background: #555 !important;
+      cursor: not-allowed;
+    }
+
+    #download-btn:disabled {
+      background: #888;
+      pointer-events: none;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 1.1em;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
 
     .bottom-fill {
@@ -159,13 +177,24 @@
       color: #ffcb57;
     }
 
+    .faq {
+      margin-top: 60px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 600px;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+
     @media (max-width: 600px) {
       h1 {
         font-size: 1.4em;
       }
 
       #file-label,
-      button {
+      button,
+      #download-btn {
         font-size: 0.9em;
         padding: 10px 18px;
       }
@@ -204,12 +233,17 @@
   <div class="main-content">
     <h1>העלו תמונה של הכתב יד שלכם ואנחנו נעשה את השאר...</h1>
 
-    <!-- הפניה ל-crop.html אחרי העלאת התמונה -->
-    <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+    <form id="upload-form" enctype="multipart/form-data">
       <input type="file" id="file" name="file" accept="image/*" required />
       <label id="file-label" for="file">בחר תמונה</label><br />
       <button type="submit" id="submit-btn">שלח תמונה</button>
     </form>
+
+    <div id="status"></div>
+
+    <a id="download-btn" href="/payment">
+      🔒 הורד את הפונט ב־24.90 ₪ לשימוש מלא
+    </a>
 
     <div class="page-link" onclick="window.location.href='/instructions'">
       איך מעלים את התמונה? 📷
@@ -239,6 +273,54 @@
       "opacity": { "center": 1, "edge": 0.1 },
       "skew": -2,
       "shapes": ["c"]
+    });
+  </script>
+
+  <script>
+    const form = document.getElementById('upload-form');
+    const status = document.getElementById('status');
+    const fileInput = document.getElementById('file');
+    const fileLabel = document.getElementById('file-label');
+    const submitBtn = document.getElementById('submit-btn');
+
+    fileInput.addEventListener('change', () => {
+      const fileName = fileInput.files[0]?.name || '';
+      if (fileName) {
+        fileLabel.textContent = `✔️ התמונה נבחרה: ${fileName}`;
+        fileLabel.style.background = '#555';
+        fileLabel.style.cursor = 'default';
+        fileLabel.style.pointerEvents = 'none';
+      }
+    });
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      submitBtn.textContent = '⏳ מעלה תמונה...';
+      submitBtn.disabled = true;
+
+      const formData = new FormData(form);
+      try {
+        const res = await fetch('/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          status.textContent = '❌ שגיאה בתהליך: ' + text;
+          submitBtn.textContent = 'שלח תמונה';
+          submitBtn.disabled = false;
+        } else {
+          // העלאה הצליחה → הפניה ל־crop.html
+          status.textContent = '✔️ התמונה הועלתה בהצלחה!';
+          window.location.href = '/crop.html';
+        }
+      } catch (err) {
+        status.textContent = '❌ שגיאה כללית: ' + err.message;
+        submitBtn.textContent = 'שלח תמונה';
+        submitBtn.disabled = false;
+      }
     });
   </script>
 </body>
