@@ -30,20 +30,27 @@ button:hover { background-color:#2980b9; }
 <body>
 <h1>חיתוך סדרתי של אותיות</h1>
 <div id="letters-bar"></div>
+
 <div id="image-container">
-  <img id="source-image" src="{{ url_for('static', filename='uploads/' + filename) }}" alt="תמונה לחיתוך" />
-  <div id="crop-rectangle">
-    <div class="resize-handle nw"></div>
-    <div class="resize-handle ne"></div>
-    <div class="resize-handle sw"></div>
-    <div class="resize-handle se"></div>
-  </div>
+  {% if filename %}
+    <img id="source-image" src="{{ url_for('static', filename='uploads/' + filename) }}" alt="תמונה לחיתוך" />
+    <div id="crop-rectangle">
+      <div class="resize-handle nw"></div>
+      <div class="resize-handle ne"></div>
+      <div class="resize-handle sw"></div>
+      <div class="resize-handle se"></div>
+    </div>
+  {% else %}
+    <p>אין תמונה זמינה לחיתוך. העלה תמונה חדשה.</p>
+  {% endif %}
 </div>
+
 <div id="controls">
   <button id="save-crop">שמור אות נוכחית</button>
   <button id="undo-crop">בטל חיתוך אחרון</button>
   <button id="generateFontBtn" style="display:none;">צור פונט</button>
 </div>
+
 <div id="status"></div>
 <div id="progress-container"><div id="progress-bar"></div></div>
 
@@ -80,8 +87,7 @@ function updateLettersBar(){
 function clamp(val,min,max){return Math.min(Math.max(val,min),max);}
 function getEventPos(e){return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY};}
 
-// ==== קוד החיתוך כמו שהיה (לא שיניתי) ====
-// ... (כל הפונקציות של drag/resize/save/undo נשארות כמו בקובץ שלך)
+// ==== שאר הפונקציות נשארות ללא שינוי ====
 
 // יצירת הפונט
 generateBtn.addEventListener("click", async()=>{
@@ -89,7 +95,6 @@ generateBtn.addEventListener("click", async()=>{
   const res=await fetch("/generate_font",{method:"POST"});
   const data=await res.json();
   if(data.status==="success"){
-    // הפניה חזרה לדף הבית
     window.location.href = data.redirect;
   } else {
     statusEl.textContent="❌ שגיאה ביצירת הפונט: "+data.message;
