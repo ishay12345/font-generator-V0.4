@@ -234,7 +234,7 @@
     <h1>העלו תמונה של הכתב יד שלכם ואנחנו נעשה את השאר...</h1>
 
     <form id="upload-form" enctype="multipart/form-data">
-      <input type="file" id="file" name="file" accept="image/*" required />
+      <input type="file" id="file" name="image" accept="image/*" required />
       <label id="file-label" for="file">בחר תמונה</label><br />
       <button type="submit" id="submit-btn">שלח תמונה</button>
     </form>
@@ -313,7 +313,7 @@
           submitBtn.textContent = 'שלח תמונה';
           submitBtn.disabled = false;
         } else {
-          // כאן השינוי: נלך אחרי ה־redirect שהשרת החזיר
+          // redirect שהשרת החזיר
           status.textContent = '✔️ התמונה הועלתה בהצלחה!';
           window.location.href = res.url;
         }
