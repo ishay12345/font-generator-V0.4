@@ -66,20 +66,21 @@ def upload():
     input_path = os.path.join(UPLOADS_DIR, filename)
     f.save(input_path)
 
-    # המרה פשוטה לשחור-לבן
+    # --- גרסה ראשונה: שמירה פשוטה (convert_to_black_white) ---
+    bw_name = f"bw_{filename}"
+    bw_path = os.path.join(PROCESSED_DIR, bw_name)
+    convert_to_black_white(input_path, bw_path, filename=bw_name)
+
+    # --- גרסה שנייה: מנורמלת + ממורכזת ---
     processed_name = f"proc_{filename}"
     processed_path = os.path.join(PROCESSED_DIR, processed_name)
-    convert_to_black_white(input_path, processed_path)
+    normalize_and_center_glyph(input_path, processed_path, filename=processed_name)
 
-    # שמירה להצגה בתיקיית static/uploads
-    dest_path = os.path.join(UPLOADS_DIR, processed_name)
-    shutil.copy(processed_path, dest_path)
-
-    # שמירת שם הקובץ האחרון ב-session
+    # נעדיף להמשיך עם הגרסה המנורמלת
     session['last_filename'] = processed_name
-    print(f"[upload] saved and processed -> {processed_name}")
+    print(f"[upload] saved bw -> {bw_name}, normalized -> {processed_name}")
 
-    # redirect ל-crop עם query string של filename
+    # redirect ל-crop עם הגרסה המנורמלת
     return redirect(url_for('crop', filename=processed_name))
 
 # ----------------------
