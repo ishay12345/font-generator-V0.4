@@ -30,6 +30,13 @@ letter_map = {
     "resh": 0x05E8,
     "shin": 0x05E9,
     "tav": 0x05EA,
+
+    # סופיות:
+    "finalkaf": 0x05DA,   # ך
+    "finalmem": 0x05DD,   # ם
+    "finalnun": 0x05DF,   # ן
+    "finalpe": 0x05E3,    # ף
+    "finaltsadi": 0x05E5  # ץ
 }
 
 # ===== הזזות אנכיות =====
