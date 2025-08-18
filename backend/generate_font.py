@@ -30,12 +30,6 @@ letter_map = {
     "resh": 0x05E8,
     "shin": 0x05E9,
     "tav": 0x05EA,
-    # אותיות סופיות
-    "finalkaf": 0x05DA,
-    "finalmem": 0x05DD,
-    "finalnun": 0x05DF,
-    "finalpe": 0x05E3,
-    "finaltsadi": 0x05E5
 }
 
 # ===== הזזות אנכיות =====
@@ -52,10 +46,8 @@ GLOBAL_SCALE = 0.7
 
 # ===== טרנספורמציות מיוחדות =====
 special_transforms = {
-    "finalpe": Identity.scale(0.70, 0.70).translate(50, 250),
-    "finaltsadi": Identity.scale(0.68, 0.68).translate(50, 250),
+    # כאן אפשר להשאיר רק אותיות רגילות אם רוצים
 }
-
 
 def generate_ttf(svg_folder, output_ttf):
     print("🚀 התחלת יצירת פונט...")
@@ -113,7 +105,7 @@ def generate_ttf(svg_folder, output_ttf):
                 glyph.leftMargin = 20
                 glyph.rightMargin = 20
 
-            padding = PADDING_LARGE if name in ["finalkaf", "finalpe", "finaltsadi"] else PADDING_GENERAL
+            padding = PADDING_GENERAL
             vertical_shift = vertical_offsets.get(name, 0) + GLOBAL_Y_SHIFT
 
             # בסיס: סקייל גלובלי
@@ -155,60 +147,6 @@ def generate_ttf(svg_folder, output_ttf):
 
         except Exception as e:
             msg = f"❌ שגיאה בעיבוד {filename}: {e}"
-            print(msg)
-            logs.append(msg)
-
-    # ===== טעינת אותיות סופיות ידנית =====
-    final_svgs = {
-        "finalkaf": "app/backend/static/svg_letters/finalkaf.svg",
-        "finalmem": "app/backend/static/svg_letters/finalmem.svg",
-        "finalnun": "app/backend/static/svg_letters/finalnun.svg",
-        "finalpe": "app/backend/static/svg_letters/finalpe.svg",
-        "finaltsadi": "app/backend/static/svg_letters/finaltsadi.svg"
-    }
-
-    for name, path in final_svgs.items():
-        if not os.path.exists(path):
-            msg = f"⚠️ קובץ סופי לא נמצא: {path}"
-            print(msg)
-            logs.append(msg)
-            continue
-
-        try:
-            unicode_val = letter_map[name]
-            doc = minidom.parse(path)
-            paths = doc.getElementsByTagName('path')
-
-            glyph = font.newGlyph(name)
-            glyph.unicode = unicode_val
-            glyph.width = 600
-            glyph.leftMargin = 40
-            glyph.rightMargin = 40
-
-            padding = PADDING_LARGE if name in ["finalkaf", "finalpe", "finaltsadi"] else PADDING_GENERAL
-            vertical_shift = vertical_offsets.get(name, 0) + GLOBAL_Y_SHIFT
-
-            transform = Identity.scale(GLOBAL_SCALE, GLOBAL_SCALE).translate(padding, vertical_shift - padding)
-            if name in special_transforms:
-                transform = special_transforms[name].scale(GLOBAL_SCALE, GLOBAL_SCALE).translate(padding, vertical_shift - padding)
-
-            pen = glyph.getPen()
-            tp = TransformPen(pen, transform)
-
-            for path_element in paths:
-                d = path_element.getAttribute('d')
-                if not d.strip():
-                    continue
-                parse_path(d, tp)
-
-            doc.unlink()
-            msg = f"✅ אות סופית {name} נטענה בהצלחה"
-            print(msg)
-            logs.append(msg)
-            used_letters.add(name)
-
-        except Exception as e:
-            msg = f"❌ שגיאה בטעינת האות הסופית {name}: {e}"
             print(msg)
             logs.append(msg)
 
