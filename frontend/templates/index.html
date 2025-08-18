@@ -94,7 +94,7 @@
       max-width: 320px;
       width: 100%;
       margin: 0 auto;
-      display: {% if font_ready %}none{% else %}block{% endif %};
+      display: block;
     }
 
     input[type="file"] {
@@ -242,16 +242,10 @@
 
     <div id="status"></div>
 
-    <!-- כפתור ההורדה מותנה במצב -->
-    {% if font_ready %}
-      <a id="download-btn" href="{{ url_for('download_font') }}">
-        ⬇️ הורד את הפונט שלך עכשיו
-      </a>
-    {% else %}
-      <a id="download-btn" href="#" disabled>
-        🔒 הורד את הפונט ב־24.90 ₪ לשימוש מלא
-      </a>
-    {% endif %}
+    <!-- כפתור ההורדה תמיד קיים, אבל מוסתר עד שהפונט מוכן -->
+    <a id="download-btn" href="{{ url_for('download_font') }}" style="display:none;">
+      ⬇️ הורד את הפונט שלך עכשיו
+    </a>
 
     <div class="page-link" onclick="window.location.href='/instructions'">
       איך מעלים את התמונה? 📷
@@ -290,6 +284,7 @@
     const fileInput = document.getElementById('file');
     const fileLabel = document.getElementById('file-label');
     const submitBtn = document.getElementById('submit-btn');
+    const downloadBtn = document.getElementById('download-btn');
 
     fileInput.addEventListener('change', () => {
       const fileName = fileInput.files[0]?.name || '';
@@ -322,7 +317,9 @@
           submitBtn.disabled = false;
         } else {
           status.textContent = '✔️ התמונה הועלתה בהצלחה!';
-          window.location.href = res.url;
+          // כאן מציגים את כפתור ההורדה
+          downloadBtn.style.display = 'inline-block';
+          window.scrollTo({ top: downloadBtn.offsetTop - 50, behavior: 'smooth' });
         }
       } catch (err) {
         status.textContent = '❌ שגיאה כללית: ' + err.message;
