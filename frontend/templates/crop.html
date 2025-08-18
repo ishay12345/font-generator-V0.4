@@ -55,12 +55,12 @@
     .resize-handle.sw { bottom:-8px; left:-8px; cursor:nesw-resize; }
     .resize-handle.se { bottom:-8px; right:-8px; cursor:nwse-resize; }
     #controls { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-    button, a#downloadFontBtn {
+    button {
       padding: 12px 22px; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer;
       color: #fff; background: linear-gradient(135deg, #3498db, #9b59b6); box-shadow: 0 6px 18px rgba(0,0,0,0.3);
       backdrop-filter: blur(6px); text-decoration: none; transition: all 0.3s ease;
     }
-    button:hover, a#downloadFontBtn:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 10px 22px rgba(0,0,0,0.45); background: linear-gradient(135deg, #2980b9, #8e44ad); }
+    button:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 10px 22px rgba(0,0,0,0.45); background: linear-gradient(135deg, #2980b9, #8e44ad); }
     #status { margin-top: 12px; font-weight: bold; color: #ffeb3b; min-height: 1.2em; text-shadow:0 0 8px rgba(0,0,0,0.6); }
     #progress-container { margin-top: 12px; width: 220px; height: 22px; border: 2px solid rgba(255,255,255,0.5); border-radius: 12px; overflow: hidden; display: none; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px);}
     #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg,#00c6ff,#ff6b6b,#fddb92); background-size:300% 300%; animation: gradientMove 5s linear infinite; transition: width 0.2s ease;}
@@ -99,7 +99,6 @@
   <button id="save-crop">שמור אות נוכחית</button>
   <button id="undo-crop">בטל חיתוך אחרון</button>
   <button id="generateFontBtn" style="display:none;">צור פונט</button>
-  <a id="downloadFontBtn" href="/backend/download_font" download>⬇ הורד את הפונט</a>
 </div>
 <div id="status"></div>
 <div id="progress-container"><div id="progress-bar"></div></div>
@@ -192,10 +191,9 @@ document.getElementById('undo-crop').addEventListener('click',()=>{
   updateLettersBar();
 });
 
-// יצירת פונט + הורדה
+// יצירת פונט
 async function createFont() {
   const statusEl = document.getElementById('status');
-  const downloadBtn = document.getElementById('downloadFontBtn');
 
   statusEl.textContent = "⏳ יוצרים את הפונט, המתן...";
   try {
@@ -203,8 +201,7 @@ async function createFont() {
     const data = await res.json();
 
     if (data.status === "success") {
-      downloadBtn.href = data.download_url;
-      statusEl.textContent = "🎉 הפונט מוכן! לחץ על הורדה להורדת הפונט.";
+      statusEl.textContent = "🎉 הפונט מוכן!";
     } else {
       statusEl.textContent = "❌ שגיאה ביצירת הפונט: " + data.message;
     }
@@ -215,11 +212,6 @@ async function createFont() {
 }
 
 document.getElementById('generateFontBtn').addEventListener('click',createFont);
-document.getElementById('downloadFontBtn').addEventListener('click', async (e)=>{
-  e.preventDefault();
-  await createFont();
-  setTimeout(()=>{ window.location.href = e.target.href; }, 500);
-});
 {% endif %}
 </script>
 </body>
