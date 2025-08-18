@@ -99,7 +99,7 @@
   <button id="save-crop">שמור אות נוכחית</button>
   <button id="undo-crop">בטל חיתוך אחרון</button>
   <button id="generateFontBtn" style="display:none;">צור פונט</button>
-  <a id="downloadFontBtn" href="#" download style="display:none;">⬇ הורד את הפונט</a>
+  <a id="downloadFontBtn" href="/backend/download_font" download>⬇ הורד את הפונט</a>
 </div>
 <div id="status"></div>
 <div id="progress-container"><div id="progress-bar"></div></div>
@@ -204,7 +204,6 @@ async function createFont() {
 
     if (data.status === "success") {
       downloadBtn.href = data.download_url;
-      downloadBtn.style.display = "inline-block";
       statusEl.textContent = "🎉 הפונט מוכן! לחץ על הורדה להורדת הפונט.";
     } else {
       statusEl.textContent = "❌ שגיאה ביצירת הפונט: " + data.message;
@@ -216,6 +215,11 @@ async function createFont() {
 }
 
 document.getElementById('generateFontBtn').addEventListener('click',createFont);
+document.getElementById('downloadFontBtn').addEventListener('click', async (e)=>{
+  e.preventDefault();
+  await createFont();
+  setTimeout(()=>{ window.location.href = e.target.href; }, 500);
+});
 {% endif %}
 </script>
 </body>
