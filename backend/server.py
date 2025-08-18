@@ -156,19 +156,20 @@ def save_crop():
         return jsonify({"error": str(e)}), 500
 
 # ----------------------
-# 🔠 יצירת פונט
+# 🔠 יצירת פונט – תמיד מחזיר ל-index
 # ----------------------
 @app.route('/generate_font', methods=['POST'])
 def generate_font_route():
     try:
-        success, _ = generate_ttf(svg_folder=SVG_DIR, output_ttf=FONT_OUTPUT_PATH)
-        if success:
-            # 🔹 אחרי יצירת הפונט – חזרה אוטומטית לדף הבית
-            return redirect(url_for('index'))
-        else:
-            return render_template('index.html', error='כישלון ביצירת הפונט')
+        # יוצר פונט תמיד, גם אם יש בעיות
+        success, logs = generate_ttf(svg_folder=SVG_DIR, output_ttf=FONT_OUTPUT_PATH)
+        for log in logs:
+            print(log)
+        # 🔹 הפניה תמיד ל-index.html עם כפתור הורדה פעיל
+        return redirect(url_for('index'))
     except Exception as e:
-        return render_template('index.html', error=str(e))
+        print(f"[generate_font] exception: {e}")
+        return redirect(url_for('index'))
 
 # ----------------------
 # ⬇️ הורדת פונט
