@@ -241,9 +241,9 @@
 
     <div id="status"></div>
 
-    <!-- כפתור ההורדה תלוי במצב הפונט -->
+    <!-- כפתור ההורדה מותנה במצב -->
     {% if font_ready %}
-      <a id="download-btn" href="/payment">
+      <a id="download-btn" href="{{ url_for('download_font') }}">
         ⬇️ הורד את הפונט שלך עכשיו
       </a>
     {% else %}
