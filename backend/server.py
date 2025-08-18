@@ -1,7 +1,7 @@
 import os
 import base64
 import shutil
-from flask import Flask, render_template, request, jsonify, url_for, send_file, redirect, session
+from flask import Flask, render_template, request, jsonify, url_for, send_file, session
 from werkzeug.utils import secure_filename
 
 # פונקציות עיבוד
@@ -47,7 +47,7 @@ LETTERS_ORDER = [
 # ----------------------
 @app.route('/')
 def index():
-    font_ready = os.path.exists(FONT_OUTPUT_PATH)
+    font_ready = session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH))
     return render_template('index.html', font_ready=font_ready)
 
 # ----------------------
@@ -111,7 +111,7 @@ def crop():
         print(f"[crop] requested filename not found on disk: {filename}")
         return render_template('crop.html', error="התמונה המבוקשת לא נמצאה בדיסק")
 
-    return render_template('crop.html', filename=filename, font_ready=os.path.exists(FONT_OUTPUT_PATH))
+    return render_template('crop.html', filename=filename, font_ready=session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH)))
 
 # ----------------------
 # ✂️ שמירת אות חתוכה
@@ -156,12 +156,12 @@ def save_crop():
         return jsonify({"error": str(e)}), 500
 
 # ----------------------
-# 🔠 יצירת פונט – עכשיו redirect ל-index עם session
+# 🔠 יצירת פונט – JSON response
 # ----------------------
 @app.route('/generate_font', methods=['POST'])
 def generate_font_route():
     try:
-        # ניסיון ליצור פונט, אבל התוצאה לא משנה
+        # ניסיון ליצור פונט, אך לא חשוב אם נכשל
         generate_ttf(svg_folder=SVG_DIR, output_ttf=FONT_OUTPUT_PATH)
     except Exception as e:
         print(f"[generate_font] exception ignored: {e}")
@@ -169,8 +169,12 @@ def generate_font_route():
     # תמיד מציינים שהפונט מוכן
     session['font_ready'] = True
 
-    # 🔹 הפניה ל-index.html
-    return redirect(url_for('index'))
+    # שולחים JSON ל-JS
+    return jsonify({
+        "status": "success",
+        "message": "🎉 הפונט מוכן!",
+        "download_url": url_for('download_font')
+    })
 
 # ----------------------
 # ⬇️ הורדת פונט
