@@ -41,12 +41,11 @@ vertical_offsets = {
 # ===== הגדרות כלליות =====
 GLOBAL_Y_SHIFT = -400
 PADDING_GENERAL = 15
-PADDING_LARGE = 150
 GLOBAL_SCALE = 0.7
 
 # ===== טרנספורמציות מיוחדות =====
 special_transforms = {
-    # כאן אפשר להשאיר רק אותיות רגילות אם רוצים
+    # כאן ניתן להוסיף אותיות מיוחדות אם נדרש
 }
 
 def generate_ttf(svg_folder, output_ttf):
@@ -59,8 +58,6 @@ def generate_ttf(svg_folder, output_ttf):
     font.info.ascender = 800
     font.info.descender = -200
 
-    used_letters = set()
-    count = 0
     logs = []
 
     # ===== טעינת כל ה־SVG =====
@@ -69,10 +66,7 @@ def generate_ttf(svg_folder, output_ttf):
             continue
 
         try:
-            if "_" in filename:
-                name = filename.split("_", 1)[1].replace(".svg", "")
-            else:
-                name = filename.replace(".svg", "")
+            name = filename.split("_", 1)[1].replace(".svg", "") if "_" in filename else filename.replace(".svg", "")
 
             if name not in letter_map:
                 msg = f"🔸 אות לא במפה: {name}"
@@ -97,23 +91,20 @@ def generate_ttf(svg_folder, output_ttf):
             glyph.unicode = unicode_val
             glyph.width = 500
 
-            # ✅ טיפול מיוחד באות א
+            # טיפול מיוחד באות א
             if name == "alef":
-                glyph.leftMargin = 70 # דוחף אותה שמאלה
+                glyph.leftMargin = 70
                 glyph.rightMargin = 20
             else:
                 glyph.leftMargin = 20
                 glyph.rightMargin = 20
 
-            padding = PADDING_GENERAL
             vertical_shift = vertical_offsets.get(name, 0) + GLOBAL_Y_SHIFT
+            transform = Identity.scale(GLOBAL_SCALE, GLOBAL_SCALE).translate(PADDING_GENERAL, vertical_shift - PADDING_GENERAL)
 
-            # בסיס: סקייל גלובלי
-            transform = Identity.scale(GLOBAL_SCALE, GLOBAL_SCALE).translate(padding, vertical_shift - padding)
-
-            # אם יש טרנספורמציה מיוחדת → מחילים גם אותה
+            # טרנספורמציה מיוחדת אם קיימת
             if name in special_transforms:
-                transform = special_transforms[name].scale(GLOBAL_SCALE, GLOBAL_SCALE).translate(padding, vertical_shift - padding)
+                transform = special_transforms[name].scale(GLOBAL_SCALE, GLOBAL_SCALE).translate(PADDING_GENERAL, vertical_shift - PADDING_GENERAL)
 
             pen = glyph.getPen()
             tp = TransformPen(pen, transform)
@@ -142,8 +133,6 @@ def generate_ttf(svg_folder, output_ttf):
             msg = f"✅ {name} נוסף בהצלחה ({successful_paths} path/paths)"
             print(msg)
             logs.append(msg)
-            used_letters.add(name)
-            count += 1
 
         except Exception as e:
             msg = f"❌ שגיאה בעיבוד {filename}: {e}"
@@ -151,20 +140,21 @@ def generate_ttf(svg_folder, output_ttf):
             logs.append(msg)
 
     # ===== שמירת הפונט =====
-    if count == 0:
-        msg = "❌ לא נוצרו גליפים כלל."
-        print(msg)
-        logs.append(msg)
-        return False, logs
-
     try:
         os.makedirs(os.path.dirname(output_ttf), exist_ok=True)
         ttf = compileTTF(font)
         ttf.save(output_ttf)
-        msg = f"\n🎉 הפונט נוצר בהצלחה בנתיב: {output_ttf}"
-        print(msg)
-        logs.append(msg)
-        return True, logs
+        if os.path.exists(output_ttf):
+            msg = f"\n🎉 הפונט נוצר בהצלחה בנתיב: {output_ttf}"
+            print(msg)
+            logs.append(msg)
+            return True, logs
+        else:
+            msg = "❌ הפונט לא נוצר."
+            print(msg)
+            logs.append(msg)
+            return False, logs
+
     except Exception as e:
         msg = f"❌ שגיאה בשמירת הפונט: {e}"
         print(msg)
