@@ -64,30 +64,37 @@ def index():
 def upload():
     if 'image' not in request.files:
         print("[upload] נכשל – לא התקבל קובץ")
-        return render_template('index.html', error='לא נשלח קובץ')
+        return jsonify({"success": False, "message": "לא נשלח קובץ"}), 400
 
     f = request.files['image']
     if f.filename == '':
         print("[upload] נכשל – לא נבחר קובץ")
-        return render_template('index.html', error='לא נבחר קובץ')
+        return jsonify({"success": False, "message": "לא נבחר קובץ"}), 400
 
-    filename = secure_filename(f.filename)
-    input_path = os.path.join(UPLOADS_DIR, filename)
-    f.save(input_path)
-    print(f"[upload] הקובץ {filename} נשמר בהצלחה")
+    try:
+        filename = secure_filename(f.filename)
+        input_path = os.path.join(UPLOADS_DIR, filename)
+        f.save(input_path)
+        print(f"[upload] הקובץ {filename} נשמר בהצלחה")
 
-    bw_name = f"bw_{filename}"
-    bw_path = os.path.join(PROCESSED_DIR, bw_name)
-    convert_to_black_white(input_path, bw_path, filename=bw_name)
-    print(f"[upload] נוצר קובץ שחור-לבן: {bw_name}")
+        bw_name = f"bw_{filename}"
+        bw_path = os.path.join(PROCESSED_DIR, bw_name)
+        convert_to_black_white(input_path, bw_path, filename=bw_name)
+        print(f"[upload] נוצר קובץ שחור-לבן: {bw_name}")
 
-    processed_name = f"proc_{filename}"
-    processed_path = os.path.join(PROCESSED_DIR, processed_name)
-    normalize_and_center_glyph(input_path, processed_path, filename=processed_name)
-    print(f"[upload] נוצר קובץ מעובד: {processed_name}")
+        processed_name = f"proc_{filename}"
+        processed_path = os.path.join(PROCESSED_DIR, processed_name)
+        normalize_and_center_glyph(input_path, processed_path, filename=processed_name)
+        print(f"[upload] נוצר קובץ מעובד: {processed_name}")
 
-    session['last_filename'] = processed_name
-    return redirect(url_for('crop', filename=processed_name))
+        session['last_filename'] = processed_name
+
+        # החזרת JSON להצלחה
+        return jsonify({"success": True, "filename": processed_name})
+    except Exception as e:
+        print(f"[upload] שגיאה: {e}")
+        return jsonify({"success": False, "message": str(e)}), 500
+
 
 # ✂️ דף חיתוך
 # ----------------------
