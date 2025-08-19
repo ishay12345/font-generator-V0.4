@@ -278,16 +278,15 @@
       "shapes": ["c"]
     });
 
-    // --- שינוי שהוספתי ---
-    document.getElementById("upload-form").addEventListener("submit", function(e) {
-      const status = document.getElementById("status");
-      status.innerText = "מעלה תמונה... בהצלחה!";
+    // נעילת כפתור הבחירה לאחר שליחת תמונה
+    const uploadForm = document.getElementById('upload-form');
+    const fileInput = document.getElementById('file');
+    const fileLabel = document.getElementById('file-label');
 
-      // מנע לחיצה חוזרת
-      document.getElementById("file").disabled = true;
-      document.getElementById("file-label").style.pointerEvents = "none";
-      document.getElementById("file-label").style.opacity = "0.6";
-      document.getElementById("submit-btn").disabled = true;
+    uploadForm.addEventListener('submit', function() {
+      fileInput.disabled = true;
+      fileLabel.style.pointerEvents = 'none';
+      fileLabel.style.opacity = '0.6';
     });
   </script>
 </body>
