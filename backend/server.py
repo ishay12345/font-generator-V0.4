@@ -187,10 +187,9 @@ def generate_font_route():
 # ----------------------
 # ⬇️ דף download.html עם כפתור מעוצב
 # ----------------------
-@app.route('/downloadd')
+@app.route('/download')
 def download_page():
     font_ready = session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH))
-    print(f"[download_page] font_ready: {font_ready}")
     if not font_ready:
         return redirect(url_for('index'))
 
