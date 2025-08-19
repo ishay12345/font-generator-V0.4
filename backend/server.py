@@ -1,7 +1,7 @@
 import os
 import base64
 import shutil
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, send_file, session, jsonify
 from werkzeug.utils import secure_filename
 
 # פונקציות עיבוד
@@ -90,25 +90,10 @@ def crop():
     filename = request.args.get('filename') or session.get('last_filename')
 
     if not filename:
-        try:
-            candidates = [
-                f for f in os.listdir(UPLOADS_DIR)
-                if os.path.isfile(os.path.join(UPLOADS_DIR, f)) and f.startswith('proc_')
-            ]
-            if candidates:
-                candidates.sort(key=lambda n: os.path.getmtime(os.path.join(UPLOADS_DIR, n)), reverse=True)
-                filename = candidates[0]
-                session['last_filename'] = filename
-                print(f"[crop] fallback picked latest processed: {filename}")
-        except Exception as e:
-            print(f"[crop] fallback scan error: {e}")
-
-    if not filename:
         return render_template('crop.html', error="אין תמונה זמינה לחיתוך")
 
     path_check = os.path.join(UPLOADS_DIR, filename)
     if not os.path.exists(path_check):
-        print(f"[crop] requested filename not found on disk: {filename}")
         return render_template('crop.html', error="התמונה המבוקשת לא נמצאה בדיסק")
 
     return render_template('crop.html', filename=filename, font_ready=session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH)))
@@ -132,7 +117,6 @@ def save_crop():
         index = int(index)
         eng_name = LETTERS_ORDER[index]
 
-        # המרה מבסיס64 ל־PNG
         _, b64 = imageData.split(',', 1)
         binary = base64.b64decode(b64)
         tmp_path = os.path.join(PROCESSED_DIR, f"tmp_{eng_name}.png")
@@ -161,30 +145,32 @@ def save_crop():
 @app.route('/generate_font', methods=['POST'])
 def generate_font_route():
     try:
-        # ניסיון ליצור פונט
         generate_ttf(svg_folder=SVG_DIR, output_ttf=FONT_OUTPUT_PATH)
-        # בדיקה שהפונט נוצר
         if os.path.exists(FONT_OUTPUT_PATH):
             session['font_ready'] = True
             return jsonify({
                 "status": "success",
                 "message": "🎉 הפונט מוכן!",
-                "download_url": url_for('download_font')
+                "download_url": url_for('download_page')
             })
         else:
-            # הפונט לא נוצר
             session['font_ready'] = False
-            return jsonify({
-                "status": "error",
-                "message": "❌ הפונט לא נוצר. נסה שנית."
-            }), 500
+            return jsonify({"status": "error", "message": "❌ הפונט לא נוצר. נסה שנית."}), 500
     except Exception as e:
-        print(f"[generate_font] exception: {e}")
         session['font_ready'] = False
-        return jsonify({
-            "status": "error",
-            "message": f"❌ שגיאה ביצירת הפונט: {e}"
-        }), 500
+        return jsonify({"status": "error", "message": f"❌ שגיאה ביצירת הפונט: {e}"}), 500
+
+# ----------------------
+# ⬇️ דף download.html עם כפתור מעוצב
+# ----------------------
+@app.route('/download')
+def download_page():
+    if not session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH)):
+        return redirect(url_for('index'))
+
+    # ניתן להעביר כתובת הפונט דרך GET
+    font_url = url_for('download_font')
+    return render_template('download.html', font_url=font_url)
 
 # ----------------------
 # ⬇️ הורדת פונט
@@ -196,7 +182,7 @@ def download_font():
     return "הפונט עדיין לא נוצר", 404
 
 # ----------------------
-# דפי מידע ותשלום נשארים כפי שהם
+# דפי מידע ותשלום
 # ----------------------
 @app.route('/instructions')
 def instructions():
