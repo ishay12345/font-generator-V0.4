@@ -6,276 +6,55 @@
   <title>ממיר כתב יד לפונט</title>
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      direction: rtl;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      box-sizing: border-box;
-      background: transparent;
-      position: relative;
-      padding: 20px;
-    }
-
-    .finisher-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
-      overflow: hidden;
-    }
-
-    .bsd {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      color: white;
-      font-size: 1.1em;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(0,0,0,0.3);
-    }
-
-    .logo-container {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-    }
-
-    .logo {
-      max-width: 200px;
-    }
-
-    .main-content {
-      margin-top: 185px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 0 20px;
-      width: 100%;
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      overflow-x: hidden; font-family: Arial, sans-serif;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: flex-start; background: #9138e5; padding: 20px;
       box-sizing: border-box;
     }
-
-    .welcome {
-      color: #fff;
-      font-size: 1.1em;
-      margin-top: 130px;
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px rgba(0,0,0,0.3);
-    }
-
-    h1 {
-      color: #fff;
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px rgba(0,0,0,0.3);
-      font-size: 2em;
-    }
-
-    form {
-      background: rgba(255, 255, 255, 0.08);
-      padding: 25px 30px;
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 30px rgba(0,0,0,0.2);
-      max-width: 320px;
-      width: 100%;
-      margin: 0 auto;
-      display: block;
-    }
-
-    input[type="file"] {
-      display: none;
-    }
-
+    h1 { color: #fff; margin-bottom: 20px; text-shadow: 0 0 10px rgba(0,0,0,0.3); }
     #file-label {
-      display: inline-block;
-      margin-top: 10px;
+      display: inline-block; margin-top: 10px;
       background: linear-gradient(45deg, #ffcb57, #ff333d);
-      color: white;
-      padding: 12px 24px;
-      font-size: 1em;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      color: white; padding: 12px 24px; font-size: 1em; border-radius: 30px;
+      cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       transition: background 0.3s ease, transform 0.2s ease;
     }
-
     #file-label:hover {
       transform: scale(1.05);
       background: linear-gradient(45deg, #6bd6ff, #9138e5);
     }
-
-    button, #download-btn {
-      margin-top: 20px;
-      background: linear-gradient(45deg, #6bd6ff, #9138e5);
-      border: none;
-      color: white;
-      padding: 12px 24px;
-      font-size: 1em;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      transition: background 0.3s ease, transform 0.2s ease;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    button:hover, #download-btn:hover {
-      transform: scale(1.05);
-      background: linear-gradient(45deg, #ffcb57, #ff333d);
-    }
-
-    button:disabled {
-      background: #555 !important;
-      cursor: not-allowed;
-    }
-
-    #status {
-      margin-top: 20px;
-      font-size: 1.1em;
-      color: #fff;
-      text-shadow: 0 0 10px rgba(0,0,0,0.3);
-    }
-
-    .bottom-fill {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100vw;
-      height: 100px;
-      background: #9138e5;
-      z-index: -2;
-    }
-
-    .page-link {
-      margin-top: 30px;
-      color: #fff;
-      font-size: 1em;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    .page-link:hover {
-      color: #ffcb57;
-    }
-
-    .faq {
-      margin-top: 60px;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 30px;
-      border-radius: 20px;
-      max-width: 600px;
-      color: #fff;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-    }
-
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 1.4em;
-      }
-
-      #file-label,
-      button,
-      #download-btn {
-        font-size: 0.9em;
-        padding: 10px 18px;
-      }
-
-      .bsd {
-        font-size: 0.9em;
-        right: 10px;
-        top: 8px;
-      }
-
-      .logo {
-        max-width: 120px;
-      }
-
-      .main-content {
-        margin-top: 80px;
-      }
-
-      .welcome {
-        font-size: 1em;
-        margin-top: 100px;
-      }
+    input[type="file"] { display: none; }
+    #preview {
+      margin-top: 30px; max-width: 90%; max-height: 400px;
+      filter: grayscale(100%);
+      border: 3px solid #fff; border-radius: 15px;
     }
   </style>
 </head>
 <body>
-  <div class="finisher-header"></div>
-  <div class="bsd">בס"ד</div>
+  <h1>בחרו תמונה והיא תוצג מיד באפור</h1>
+  <form id="upload-form">
+    <input type="file" id="file" accept="image/*" />
+    <label id="file-label" for="file">בחר תמונה</label>
+  </form>
+  <img id="preview" src="" alt="תמונה תופיע כאן" style="display:none;" />
 
-  <div class="logo-container">
-    <img class="logo" src="{{ url_for('static', filename='my-removebg-preview.png') }}" alt="לוגו">
-  </div>
-
-  <div class="welcome">האתר שיצור את הפונט בשבילכם לכל מטרה</div>
-
-  <div class="main-content">
-    <h1>העלו תמונה של הכתב יד שלכם ואנחנו נעשה את השאר...</h1>
-
-    <!-- שליחת התמונה לשרת -->
-    <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
-      <input type="file" id="file" name="image" accept="image/*" required />
-      <label id="file-label" for="file">בחר תמונה</label><br />
-      <button type="submit" id="submit-btn">שלח תמונה</button>
-    </form>
-
-    <div id="status"></div>
-
-    <div class="page-link" onclick="window.location.href='/instructions'">
-      איך מעלים את התמונה? 📷
-    </div>
-  </div>
-
-  <div class="page-link" onclick="window.location.href='/faq'">
-    שאלות ותשובות ❓
-  </div>
-
-  <div class="bottom-fill"></div>
-
-  <script src="{{ url_for('static', filename='finisher-header.es5.min.js') }}"></script>
   <script>
-    new FinisherHeader({
-      "count": 6,
-      "size": { "min": 1100, "max": 1300, "pulse": 0 },
-      "speed": {
-        "x": { "min": 0.1, "max": 0.3 },
-        "y": { "min": 0.1, "max": 0.3 }
-      },
-      "colors": {
-        "background": "#9138e5",
-        "particles": ["#6bd6ff", "#ffcb57", "#ff333d"]
-      },
-      "blending": "overlay",
-      "opacity": { "center": 1, "edge": 0.1 },
-      "skew": -2,
-      "shapes": ["c"]
-    });
+    const fileInput = document.getElementById('file');
+    const preview = document.getElementById('preview');
 
-    // JS חדש – נעילת כפתור הבחירה אחרי העלאה
-    document.getElementById('file').addEventListener('change', function() {
-      const label = document.getElementById('file-label');
-      label.style.background = '#888'; // אפור
-      label.style.cursor = 'not-allowed';
-      this.disabled = true;
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      }
+      reader.readAsDataURL(file);
     });
   </script>
 </body>
-</html>
 </html>
