@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הפונט מוכן להורדה</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&display=swap');
+
+  html, body {
+    margin: 0; padding: 0;
+    font-family: 'Heebo', sans-serif;
+    height: 100%; width: 100%;
+    display: flex; justify-content: center; align-items: center;
+    background: linear-gradient(135deg, #9138e5, #3498db, #ff333d, #ffcb57);
+    background-size: 300% 300%;
+    animation: gradientMove 15s ease infinite;
+    color: #fff;
+  }
+
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .container {
+    text-align: center;
+    background: rgba(0,0,0,0.35);
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    backdrop-filter: blur(8px);
+    max-width: 500px;
+    width: 90%;
+    animation: fadeIn 1s ease;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5), 0 0 15px rgba(255,255,255,0.6);
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    line-height: 1.5;
+    text-shadow: 0 0 6px rgba(0,0,0,0.4);
+  }
+
+  .download-btn {
+    background: linear-gradient(135deg, #ff8a00, #e52e71);
+    padding: 16px 40px;
+    font-size: 1.2em;
+    font-weight: 600;
+    border-radius: 30px;
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+  }
+
+  .download-btn:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #e52e71, #ff8a00);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .note {
+    margin-top: 20px;
+    font-size: 0.95em;
+    color: #fff;
+    opacity: 0.85;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🎉 הפונט שלכם מוכן!</h1>
+  <p>כעת נותר לכם רק להוריד אותו ולהתחיל להשתמש בו.</p>
+  <a id="downloadBtn" class="download-btn" href="#">⬇ הורד עכשיו</a>
+  <p class="note">הורדה תתחיל בדף התשלום לאחר לחיצה על הכפתור</p>
+</div>
+
+<script>
+  // קבל את כתובת הפונט מה-URL
+  const params = new URLSearchParams(window.location.search);
+  const fontUrl = params.get('font');
+  if (!fontUrl) alert("❌ הפונט לא נמצא!");
+
+  const downloadBtn = document.getElementById('downloadBtn');
+  downloadBtn.addEventListener('click', () => {
+    // מעבר ל-payment.html עם כתובת הפונט
+    window.location.href = `/payment.html?font=${encodeURIComponent(fontUrl)}`;
+  });
+</script>
+
+</body>
+</html>
