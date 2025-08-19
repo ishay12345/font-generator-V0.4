@@ -195,11 +195,9 @@ async function createFont() {
     const res = await fetch("/generate_font", { method: "POST" });
     const data = await res.json();
     if (data.status === "success") {
-      statusEl.textContent = "🎉 הפונט מוכן! נעביר אותך לדף הבית להמשך ההורדה...";
-      downloadBtn.href = data.download_url; 
-      downloadBtn.style.display = 'inline-block';
-      // מעבר אוטומטי לדף הבית אחרי 2 שניות
-      setTimeout(()=>{ window.location.href = "/"; }, 2000);
+      // הפונט מוכן – הפניה ל־download.html עם כתובת הפונט כפרמטר
+      const downloadUrl = encodeURIComponent(data.download_url);
+      window.location.href = `/download.html?font=${downloadUrl}`;
     } else {
       statusEl.textContent = "❌ שגיאה ביצירת הפונט: " + data.message;
     }
