@@ -65,6 +65,17 @@
       outline: none;
     }
 
+    .price-box {
+      background: #f7f9fc;
+      border: 1px dashed #667eea;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      margin: 15px 0;
+      font-weight: bold;
+      color: #333;
+    }
+
     .submit-btn {
       width: 100%;
       background: linear-gradient(45deg, #667eea, #764ba2);
@@ -108,6 +119,10 @@
       <div class="form-group">
         <label for="email">אימייל</label>
         <input type="email" id="email" name="email" placeholder="example@example.com" required>
+      </div>
+
+      <div class="price-box">
+        מחיר העסקה: <span style="color:#764ba2">2 ₪</span>
       </div>
 
       <button type="submit" class="submit-btn">לתשלום מאובטח</button>
