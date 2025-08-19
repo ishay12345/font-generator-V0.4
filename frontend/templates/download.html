@@ -36,18 +36,8 @@
     animation: fadeIn 1s ease;
   }
 
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    text-shadow: 0 0 10px rgba(0,0,0,0.5), 0 0 15px rgba(255,255,255,0.6);
-  }
-
-  p {
-    font-size: 1.1rem;
-    margin-bottom: 30px;
-    line-height: 1.5;
-    text-shadow: 0 0 6px rgba(0,0,0,0.4);
-  }
+  h1 { font-size: 2rem; margin-bottom: 20px; text-shadow: 0 0 10px rgba(0,0,0,0.5), 0 0 15px rgba(255,255,255,0.6); }
+  p { font-size: 1.1rem; margin-bottom: 30px; line-height: 1.5; text-shadow: 0 0 6px rgba(0,0,0,0.4); }
 
   .download-btn {
     background: linear-gradient(135deg, #ff8a00, #e52e71);
@@ -68,17 +58,8 @@
     box-shadow: 0 12px 30px rgba(0,0,0,0.45);
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .note {
-    margin-top: 20px;
-    font-size: 0.95em;
-    color: #fff;
-    opacity: 0.85;
-  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .note { margin-top: 20px; font-size: 0.95em; color: #fff; opacity: 0.85; }
 </style>
 </head>
 <body>
@@ -86,22 +67,10 @@
 <div class="container">
   <h1>🎉 הפונט שלכם מוכן!</h1>
   <p>כעת נותר לכם רק להוריד אותו ולהתחיל להשתמש בו.</p>
-  <a id="downloadBtn" class="download-btn" href="#">⬇ הורד עכשיו</a>
+  <!-- כפתור המעביר לדף תשלום -->
+  <a class="download-btn" href="{{ url_for('payment') }}">⬇ הורד עכשיו</a>
   <p class="note">הורדה תתחיל בדף התשלום לאחר לחיצה על הכפתור</p>
 </div>
-
-<script>
-  // קבל את כתובת הפונט מה-URL
-  const params = new URLSearchParams(window.location.search);
-  const fontUrl = params.get('font');
-  if (!fontUrl) alert("❌ הפונט לא נמצא!");
-
-  const downloadBtn = document.getElementById('downloadBtn');
-  downloadBtn.addEventListener('click', () => {
-    // מעבר ל-payment.html עם כתובת הפונט
-    window.location.href = `/payment.html?font=${encodeURIComponent(fontUrl)}`;
-  });
-</script>
 
 </body>
 </html>
