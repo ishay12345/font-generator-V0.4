@@ -277,6 +277,43 @@
       "skew": -2,
       "shapes": ["c"]
     });
+
+    // טיפול ב-Upload עם בדיקה שהקובץ התקבל לפני נעילה
+    const uploadForm = document.getElementById('upload-form');
+    const fileInput = document.getElementById('file');
+    const fileLabel = document.getElementById('file-label');
+    const statusDiv = document.getElementById('status');
+
+    uploadForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // לעצור שליחה רגילה
+
+      const formData = new FormData(uploadForm);
+      statusDiv.textContent = "מעלה תמונה...";
+
+      fetch(uploadForm.action, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          statusDiv.textContent = "✅ התמונה התקבלה בהצלחה!";
+          // נעילת בחירת קובץ
+          fileInput.disabled = true;
+          fileLabel.style.pointerEvents = 'none';
+          fileLabel.style.opacity = '0.6';
+          // הצגת כפתור ההורדה אם קיים
+          const downloadBtn = document.getElementById('download-btn');
+          if (downloadBtn) downloadBtn.style.display = 'inline-block';
+        } else {
+          statusDiv.textContent = "❌ העלאה נכשלה: " + (data.message || "בעיה לא ידועה");
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        statusDiv.textContent = "❌ קרתה שגיאה בהעלאת הקובץ";
+      });
+    });
   </script>
 </body>
 </html>
