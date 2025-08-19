@@ -129,7 +129,7 @@ function updateLettersBar(){
   if(currentIndex<letters.length) currentLetterEl.textContent=`חתכו את האות ${letters[currentIndex]}`;
 }
 
-// --- כאן ניתן לשמור ולהפעיל חיתוך ---
+// --- Drag & Resize ---
 const cropRect=document.getElementById('crop-rectangle');
 const img=document.getElementById('source-image');
 const container=document.getElementById('image-container');
@@ -142,17 +142,12 @@ cropRect.addEventListener('touchstart', startDrag, {passive:false});
 function startDrag(e){if(e.target.classList.contains('resize-handle')) return; e.preventDefault(); drag=true; const pos=getEventPos(e); startX=pos.x; startY=pos.y; const rect=cropRect.getBoundingClientRect(); origX=rect.left; origY=rect.top; window.addEventListener('mousemove',onDrag); window.addEventListener('touchmove',onDrag,{passive:false}); window.addEventListener('mouseup',stopDrag); window.addEventListener('touchend',stopDrag);}
 function onDrag(e){if(!drag) return; e.preventDefault(); const pos=getEventPos(e); let dx=pos.x-startX, dy=pos.y-startY; const imgRect=img.getBoundingClientRect(); const containerRect=container.getBoundingClientRect(); let newLeft=origX+dx, newTop=origY+dy; newLeft=clamp(newLeft,imgRect.left,imgRect.right-cropRect.offsetWidth); newTop=clamp(newTop,imgRect.top,imgRect.bottom-cropRect.offsetHeight); cropRect.style.left=(newLeft-containerRect.left)+'px'; cropRect.style.top=(newTop-containerRect.top)+'px';}
 function stopDrag(){drag=false; window.removeEventListener('mousemove',onDrag); window.removeEventListener('touchmove',onDrag); window.removeEventListener('mouseup',stopDrag); window.removeEventListener('touchend',stopDrag);}
-
-// שינוי גודל
-document.querySelectorAll('.resize-handle').forEach(h=>{
-  h.addEventListener('mousedown', startResize);
-  h.addEventListener('touchstart', startResize,{passive:false});
-});
+document.querySelectorAll('.resize-handle').forEach(h=>{ h.addEventListener('mousedown', startResize); h.addEventListener('touchstart', startResize,{passive:false}); });
 function startResize(e){e.preventDefault(); resize=true; resizeDir=[...e.target.classList].find(c=>['nw','ne','sw','se'].includes(c)); const pos=getEventPos(e); startX=pos.x; startY=pos.y; const rect=cropRect.getBoundingClientRect(); origX=rect.left; origY=rect.top; origW=cropRect.offsetWidth; origH=cropRect.offsetHeight; window.addEventListener('mousemove',onResize); window.addEventListener('touchmove',onResize,{passive:false}); window.addEventListener('mouseup',stopResize); window.addEventListener('touchend',stopResize);}
 function onResize(e){if(!resize) return; e.preventDefault(); const pos=getEventPos(e); let dx=pos.x-startX, dy=pos.y-startY; let newLeft=parseInt(cropRect.style.left), newTop=parseInt(cropRect.style.top), newWidth=origW, newHeight=origH; if(resizeDir.includes('n')){ newTop += dy; newHeight -= dy; } if(resizeDir.includes('w')){ newLeft += dx; newWidth -= dx; } if(resizeDir.includes('e')){ newWidth += dx; } if(resizeDir.includes('s')){ newHeight += dy; } newWidth=Math.max(minWidth,newWidth); newHeight=Math.max(minHeight,newHeight); cropRect.style.left=newLeft+'px'; cropRect.style.top=newTop+'px'; cropRect.style.width=newWidth+'px'; cropRect.style.height=newHeight+'px';}
 function stopResize(){resize=false; window.removeEventListener('mousemove',onResize); window.removeEventListener('touchmove',onResize); window.removeEventListener('mouseup',stopResize); window.removeEventListener('touchend',stopResize);}
 
-// --- שמירה ---
+// --- Save Crop ---
 document.getElementById('save-crop').addEventListener('click', async()=>{
   if(!img.naturalWidth) return alert('התמונה עדיין בטעינה');
   const rect=cropRect.getBoundingClientRect(), imgRect=img.getBoundingClientRect();
@@ -166,9 +161,6 @@ document.getElementById('save-crop').addEventListener('click', async()=>{
 
   const canvas=document.createElement('canvas'); canvas.width=cropW; canvas.height=cropH;
   const ctx=canvas.getContext('2d'); ctx.drawImage(img,cropX,cropY,cropW,cropH,0,0,cropW,cropH);
-  const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
-  for(let i=0;i<data.length;i+=4){ const avg=(data[i]+data[i+1]+data[i+2])/3; data[i]=data[i+1]=data[i+2]=avg; }
-  ctx.putImageData(new ImageData(data,canvas.width,canvas.height),0,0);
 
   const res=await fetch('/backend/save_crop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:letters[currentIndex],index:currentIndex,data:canvas.toDataURL('image/png')})});
   const json=await res.json();
@@ -193,7 +185,7 @@ document.getElementById('undo-crop').addEventListener('click',()=>{
   updateLettersBar();
 });
 
-// --- יצירת פונט ---
+// --- Generate Font ---
 async function createFont() {
   const statusEl = document.getElementById('status');
   statusEl.textContent = "⏳ יוצרים את הפונט, המתן...";
@@ -214,6 +206,6 @@ async function createFont() {
 }
 generateBtn.addEventListener('click', createFont);
 {% endif %}
-</script>
+</script
 </body>
 </html>
