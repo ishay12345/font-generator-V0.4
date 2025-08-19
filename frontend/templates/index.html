@@ -234,6 +234,7 @@
   <div class="main-content">
     <h1>העלו תמונה של הכתב יד שלכם ואנחנו נעשה את השאר...</h1>
 
+    <!-- שליחת התמונה לשרת -->
     <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
       <input type="file" id="file" name="image" accept="image/*" required />
       <label id="file-label" for="file">בחר תמונה</label><br />
@@ -275,57 +276,6 @@
       "opacity": { "center": 1, "edge": 0.1 },
       "skew": -2,
       "shapes": ["c"]
-    });
-  </script>
-
-  <script>
-    const form = document.getElementById('upload-form');
-    const status = document.getElementById('status');
-    const fileInput = document.getElementById('file');
-    const fileLabel = document.getElementById('file-label');
-    const submitBtn = document.getElementById('submit-btn');
-    const downloadBtn = document.getElementById('download-btn');
-
-    fileInput.addEventListener('change', () => {
-      const fileName = fileInput.files[0]?.name || '';
-      if (fileName) {
-        fileLabel.textContent = `✔️ התמונה נבחרה: ${fileName}`;
-        fileLabel.style.background = '#555';
-        fileLabel.style.cursor = 'default';
-        fileLabel.style.pointerEvents = 'none';
-      }
-    });
-
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-
-      submitBtn.textContent = '⏳ מעלה תמונה...';
-      submitBtn.disabled = true;
-
-      const formData = new FormData(form);
-      try {
-        const res = await fetch('/upload', {
-          method: 'POST',
-          body: formData,
-          redirect: "follow"
-        });
-
-        if (!res.ok) {
-          const text = await res.text();
-          status.textContent = '❌ שגיאה בתהליך: ' + text;
-          submitBtn.textContent = 'שלח תמונה';
-          submitBtn.disabled = false;
-        } else {
-          status.textContent = '✔️ התמונה הועלתה בהצלחה!';
-          // כאן מציגים את כפתור ההורדה
-          downloadBtn.style.display = 'inline-block';
-          window.scrollTo({ top: downloadBtn.offsetTop - 50, behavior: 'smooth' });
-        }
-      } catch (err) {
-        status.textContent = '❌ שגיאה כללית: ' + err.message;
-        submitBtn.textContent = 'שלח תמונה';
-        submitBtn.disabled = false;
-      }
     });
   </script>
 </body>
