@@ -144,11 +144,6 @@
       cursor: not-allowed;
     }
 
-    #download-btn[disabled] {
-      background: #888;
-      pointer-events: none;
-    }
-
     #status {
       margin-top: 20px;
       font-size: 1.1em;
@@ -243,11 +238,6 @@
 
     <div id="status"></div>
 
-    <!-- כפתור ההורדה תמיד קיים, אבל מוסתר עד שהפונט מוכן -->
-    <a id="download-btn" href="{{ url_for('download_font') }}" style="display:none;">
-      ⬇️ הורד את הפונט שלך עכשיו
-    </a>
-
     <div class="page-link" onclick="window.location.href='/instructions'">
       איך מעלים את התמונה? 📷
     </div>
@@ -278,41 +268,12 @@
       "shapes": ["c"]
     });
 
-    // טיפול ב-Upload עם בדיקה שהקובץ התקבל לפני נעילה
-    const uploadForm = document.getElementById('upload-form');
-    const fileInput = document.getElementById('file');
-    const fileLabel = document.getElementById('file-label');
-    const statusDiv = document.getElementById('status');
-
-    uploadForm.addEventListener('submit', function(e) {
-      e.preventDefault(); // לעצור שליחה רגילה
-
-      const formData = new FormData(uploadForm);
-      statusDiv.textContent = "מעלה תמונה...";
-
-      fetch(uploadForm.action, {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          statusDiv.textContent = "✅ התמונה התקבלה בהצלחה!";
-          // נעילת בחירת קובץ
-          fileInput.disabled = true;
-          fileLabel.style.pointerEvents = 'none';
-          fileLabel.style.opacity = '0.6';
-          // הצגת כפתור ההורדה אם קיים
-          const downloadBtn = document.getElementById('download-btn');
-          if (downloadBtn) downloadBtn.style.display = 'inline-block';
-        } else {
-          statusDiv.textContent = "❌ העלאה נכשלה: " + (data.message || "בעיה לא ידועה");
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        statusDiv.textContent = "❌ קרתה שגיאה בהעלאת הקובץ";
-      });
+    // JS חדש – נעילת כפתור הבחירה אחרי העלאה
+    document.getElementById('file').addEventListener('change', function() {
+      const label = document.getElementById('file-label');
+      label.style.background = '#888'; // אפור
+      label.style.cursor = 'not-allowed';
+      this.disabled = true;
     });
   </script>
 </body>
