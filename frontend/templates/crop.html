@@ -142,6 +142,8 @@ cropRect.addEventListener('touchstart', startDrag, {passive:false});
 function startDrag(e){if(e.target.classList.contains('resize-handle')) return; e.preventDefault(); drag=true; const pos=getEventPos(e); startX=pos.x; startY=pos.y; const rect=cropRect.getBoundingClientRect(); origX=rect.left; origY=rect.top; window.addEventListener('mousemove',onDrag); window.addEventListener('touchmove',onDrag,{passive:false}); window.addEventListener('mouseup',stopDrag); window.addEventListener('touchend',stopDrag);}
 function onDrag(e){if(!drag) return; e.preventDefault(); const pos=getEventPos(e); let dx=pos.x-startX, dy=pos.y-startY; const imgRect=img.getBoundingClientRect(); const containerRect=container.getBoundingClientRect(); let newLeft=origX+dx, newTop=origY+dy; newLeft=clamp(newLeft,imgRect.left,imgRect.right-cropRect.offsetWidth); newTop=clamp(newTop,imgRect.top,imgRect.bottom-cropRect.offsetHeight); cropRect.style.left=(newLeft-containerRect.left)+'px'; cropRect.style.top=(newTop-containerRect.top)+'px';}
 function stopDrag(){drag=false; window.removeEventListener('mousemove',onDrag); window.removeEventListener('touchmove',onDrag); window.removeEventListener('mouseup',stopDrag); window.removeEventListener('touchend',stopDrag);}
+
+// Resize handles...
 document.querySelectorAll('.resize-handle').forEach(h=>{ h.addEventListener('mousedown', startResize); h.addEventListener('touchstart', startResize,{passive:false}); });
 function startResize(e){e.preventDefault(); resize=true; resizeDir=[...e.target.classList].find(c=>['nw','ne','sw','se'].includes(c)); const pos=getEventPos(e); startX=pos.x; startY=pos.y; const rect=cropRect.getBoundingClientRect(); origX=rect.left; origY=rect.top; origW=cropRect.offsetWidth; origH=cropRect.offsetHeight; window.addEventListener('mousemove',onResize); window.addEventListener('touchmove',onResize,{passive:false}); window.addEventListener('mouseup',stopResize); window.addEventListener('touchend',stopResize);}
 function onResize(e){if(!resize) return; e.preventDefault(); const pos=getEventPos(e); let dx=pos.x-startX, dy=pos.y-startY; let newLeft=parseInt(cropRect.style.left), newTop=parseInt(cropRect.style.top), newWidth=origW, newHeight=origH; if(resizeDir.includes('n')){ newTop += dy; newHeight -= dy; } if(resizeDir.includes('w')){ newLeft += dx; newWidth -= dx; } if(resizeDir.includes('e')){ newWidth += dx; } if(resizeDir.includes('s')){ newHeight += dy; } newWidth=Math.max(minWidth,newWidth); newHeight=Math.max(minHeight,newHeight); cropRect.style.left=newLeft+'px'; cropRect.style.top=newTop+'px'; cropRect.style.width=newWidth+'px'; cropRect.style.height=newHeight+'px';}
@@ -185,7 +187,7 @@ document.getElementById('undo-crop').addEventListener('click',()=>{
   updateLettersBar();
 });
 
-// --- Generate Font ---
+// --- Generate Font with auto redirect ---
 async function createFont() {
   const statusEl = document.getElementById('status');
   statusEl.textContent = "⏳ יוצרים את הפונט, המתן...";
@@ -193,9 +195,11 @@ async function createFont() {
     const res = await fetch("/generate_font", { method: "POST" });
     const data = await res.json();
     if (data.status === "success") {
-      statusEl.textContent = "🎉 הפונט מוכן! לחץ על הורדה להורדת הפונט.";
+      statusEl.textContent = "🎉 הפונט מוכן! נעביר אותך לדף הבית להמשך ההורדה...";
       downloadBtn.href = data.download_url; 
       downloadBtn.style.display = 'inline-block';
+      // מעבר אוטומטי לדף הבית אחרי 2 שניות
+      setTimeout(()=>{ window.location.href = "/"; }, 2000);
     } else {
       statusEl.textContent = "❌ שגיאה ביצירת הפונט: " + data.message;
     }
@@ -206,6 +210,6 @@ async function createFont() {
 }
 generateBtn.addEventListener('click', createFont);
 {% endif %}
-</script
+</script>
 </body>
 </html>
