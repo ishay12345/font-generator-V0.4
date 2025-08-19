@@ -1,7 +1,7 @@
 import os
 import base64
 import shutil
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, jsonify
 from werkzeug.utils import secure_filename
 
 # פונקציות עיבוד
