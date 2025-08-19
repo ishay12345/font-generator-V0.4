@@ -277,6 +277,18 @@
       "skew": -2,
       "shapes": ["c"]
     });
+
+    // --- שינוי שהוספתי ---
+    document.getElementById("upload-form").addEventListener("submit", function(e) {
+      const status = document.getElementById("status");
+      status.innerText = "מעלה תמונה... בהצלחה!";
+
+      // מנע לחיצה חוזרת
+      document.getElementById("file").disabled = true;
+      document.getElementById("file-label").style.pointerEvents = "none";
+      document.getElementById("file-label").style.opacity = "0.6";
+      document.getElementById("submit-btn").disabled = true;
+    });
   </script>
 </body>
 </html>
