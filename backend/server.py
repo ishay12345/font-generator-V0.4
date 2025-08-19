@@ -211,7 +211,7 @@ def start_payment():
         "Operation": "1",  # חיוב רגיל
         "Language": "he",
         "CoinID": "1",  # שקל
-        "SumToBill": "1.90",  # 💰 כאן משנים את המחיר
+        "SumToBill": "1.00",  # 💰 כאן משנים את המחיר
         "ProductName": "פונט אישי",
         "SuccessRedirectUrl": request.host_url + "thankyou",
         "ErrorRedirectUrl": request.host_url + "payment",
@@ -249,6 +249,19 @@ def cardcom_indicator():
 def thankyou():
     print("[thankyou] עמוד תודה נטען")
     return render_template('thankyou.html')
+
+# ----------------------
+# 📄 דפים חדשים
+# ----------------------
+@app.route('/instructions')
+def instructions():
+    print("[instructions] עמוד הוראות נטען")
+    return render_template('instructions.html')
+
+@app.route('/faq')
+def faq():
+    print("[faq] עמוד שאלות נפוצות נטען")
+    return render_template('faq.html')
 
 # ----------------------
 if __name__ == '__main__':
