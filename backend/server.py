@@ -144,15 +144,26 @@ def save_crop():
 def generate_font_route():
     try:
         generate_ttf(svg_folder=SVG_DIR, output_ttf=FONT_OUTPUT_PATH)
+
         if os.path.exists(FONT_OUTPUT_PATH):
             session['font_ready'] = True
-            return redirect(url_for('download_page'))
+            return jsonify({
+                "status": "success",
+                "download_url": url_for('download_page')
+            })
         else:
             session['font_ready'] = False
-            return render_template('index.html', error="❌ הפונט לא נוצר.")
+            return jsonify({
+                "status": "error",
+                "message": "❌ הפונט לא נוצר."
+            })
+
     except Exception as e:
         session['font_ready'] = False
-        return render_template('index.html', error=f"❌ שגיאה: {e}")
+        return jsonify({
+            "status": "error",
+            "message": f"❌ שגיאה: {str(e)}"
+        })
 
 # ----------------------
 # ⬇️ הורדת פונט
