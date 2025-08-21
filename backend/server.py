@@ -165,10 +165,14 @@ def generate_font_route():
         return jsonify({"status": "error", "message": f"❌ שגיאה: {e}"}), 500
 
 # ----------------------
-# ⬇️ הורדת פונט
+# ⬇️ הורדת פונט (רק לאחר תשלום)
 # ----------------------
 @app.route('/download')
 def download_page():
+    if not session.get("paid"):
+        print("[download_page] ❌ גישה נחסמה – המשתמש לא שילם")
+        return redirect(url_for('payment'))
+
     font_ready = session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH))
     print(f"[download_page] טוען עמוד הורדה – פונט מוכן? {font_ready}")
     if not font_ready:
@@ -179,6 +183,10 @@ def download_page():
 
 @app.route('/download_font')
 def download_font():
+    if not session.get("paid"):
+        print("[download_font] ❌ גישה נחסמה – המשתמש לא שילם")
+        return redirect(url_for('payment'))
+
     if os.path.exists(FONT_OUTPUT_PATH):
         print("[download_font] שולח קובץ פונט להורדה")
         return send_file(FONT_OUTPUT_PATH, as_attachment=True, download_name="my_font.ttf", mimetype="font/ttf")
@@ -243,6 +251,13 @@ def start_payment():
 def cardcom_indicator():
     data = request.form.to_dict() if request.method == 'POST' else request.args.to_dict()
     print("📬 CardCom Indicator:", data)
+
+    if data.get("OperationResponse") == "0":  # תשלום הצליח
+        session["paid"] = True
+        print("[cardcom-indicator] ✅ תשלום אושר – הורדה תותר")
+    else:
+        print("[cardcom-indicator] ❌ תשלום נכשל")
+
     return "OK"
 
 @app.route('/thankyou')
