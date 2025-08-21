@@ -278,6 +278,13 @@
       "skew": -2,
       "shapes": ["c"]
     });
+
+    // שינוי צבע הכפתור לאפור כשנלחץ
+    const fileLabel = document.getElementById('file-label');
+    fileLabel.addEventListener('click', () => {
+      fileLabel.style.background = 'gray';
+      fileLabel.style.color = 'white';
+    });
   </script>
 </body>
 </html>
