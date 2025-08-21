@@ -2,7 +2,7 @@ import os
 import base64
 import shutil
 import requests
-from flask import Flask, render_template, request, redirect, url_for, send_file, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, send_file, session
 from werkzeug.utils import secure_filename
 from urllib.parse import parse_qs
 
@@ -89,7 +89,7 @@ def upload():
     session['last_filename'] = processed_name
     return redirect(url_for('crop', filename=processed_name))
 
-
+# ----------------------
 # ✂️ דף חיתוך
 # ----------------------
 @app.route('/crop')
@@ -134,13 +134,13 @@ def save_crop():
         convert_png_to_svg(bw_out, svg_out)
 
         print(f"[save_crop] האות {eng_name} נשמרה בהצלחה")
-        return jsonify({"saved": f"{eng_name}.png"})
+        return {"saved": f"{eng_name}.png"}
     except Exception as e:
         print(f"[save_crop] שגיאה: {e}")
-        return jsonify({"error": str(e)}), 500
+        return {"error": str(e)}, 500
 
 # ----------------------
-# 🔠 יצירת פונט
+# 🔠 יצירת פונט – הפניה אוטומטית ל-downloadd.html
 # ----------------------
 @app.route('/generate_font', methods=['POST'])
 def generate_font_route():
@@ -150,19 +150,15 @@ def generate_font_route():
         if os.path.exists(FONT_OUTPUT_PATH):
             session['font_ready'] = True
             print("[generate_font] 🎉 הפונט נוצר בהצלחה!")
-            return jsonify({
-                "status": "success",
-                "message": "🎉 הפונט מוכן!",
-                "download_url": url_for('download_page')
-            })
+            return redirect(url_for('download_page'))
         else:
             session['font_ready'] = False
             print("[generate_font] ❌ הפונט לא נוצר")
-            return jsonify({"status": "error", "message": "❌ הפונט לא נוצר."}), 500
+            return render_template('index.html', error="❌ הפונט לא נוצר.")
     except Exception as e:
         session['font_ready'] = False
         print(f"[generate_font] ❌ שגיאה: {e}")
-        return jsonify({"status": "error", "message": f"❌ שגיאה: {e}"}), 500
+        return render_template('index.html', error=f"❌ שגיאה: {e}")
 
 # ----------------------
 # ⬇️ הורדת פונט (רק לאחר תשלום)
@@ -206,10 +202,10 @@ def start_payment():
     email = request.form.get("email")
     name = request.form.get("name") or "לקוח ללא שם"
 
-    print(f"[start_payment] התחלת תשלום עבור {name}, אימייל: {email}")
+    print(f"[start-payment] התחלת תשלום עבור {name}, אימייל: {email}")
 
     if not email:
-        print("[start_payment] נכשל – לא הוזן מייל")
+        print("[start-payment] נכשל – לא הוזן מייל")
         return "יש להזין כתובת מייל", 400
 
     payload = {
@@ -262,16 +258,7 @@ def cardcom_indicator():
 
 @app.route('/thankyou')
 def thankyou():
-    data = request.args.to_dict()
-    print("[thankyou] עמוד תודה נטען:", data)
-
-    # אם CardCom מחזיר ResponseCode=0 -> תשלום הצליח
-    if data.get("ResponseCode") == "0":
-        session["paid"] = True
-        print("[thankyou] ✅ תשלום אושר – הורדה תותר")
-    else:
-        print("[thankyou] ❌ תשלום נכשל או לא זוהה")
-
+    print("[thankyou] עמוד תודה נטען")
     return render_template('thankyou.html')
 
 # ----------------------
