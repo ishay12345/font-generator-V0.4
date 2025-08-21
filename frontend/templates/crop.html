@@ -55,29 +55,29 @@ h1 { margin: 10px; font-size: 2rem; text-shadow: 0 0 8px rgba(0,0,0,0.5),0 0 15p
 .resize-handle.sw { bottom:-8px; left:-8px; cursor:nesw-resize; }
 .resize-handle.se { bottom:-8px; right:-8px; cursor:nwse-resize; }
 #controls { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-button, a {
+button {
   padding: 12px 22px; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer;
   color: #fff; background: linear-gradient(135deg, #3498db, #9b59b6); box-shadow: 0 6px 18px rgba(0,0,0,0.3);
   backdrop-filter: blur(6px); text-decoration: none; transition: all 0.3s ease;
 }
-button:hover, a:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 10px 22px rgba(0,0,0,0.45); background: linear-gradient(135deg, #2980b9, #8e44ad); }
+button:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 10px 22px rgba(0,0,0,0.45); background: linear-gradient(135deg, #2980b9, #8e44ad); }
 #status { margin-top: 12px; font-weight: bold; color: #ffeb3b; min-height: 1.2em; text-shadow:0 0 8px rgba(0,0,0,0.6); }
 #progress-container { margin-top: 12px; width: 220px; height: 22px; border: 2px solid rgba(255,255,255,0.5); border-radius: 12px; overflow: hidden; display: none; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px);}
 #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg,#00c6ff,#ff6b6b,#fddb92); background-size:300% 300%; animation: gradientMove 5s linear infinite; transition: width 0.2s ease;}
+#downloadBtn { padding:12px 22px; border-radius:12px; background:#27ae60; color:#fff; font-weight:bold; text-decoration:none; display:none; }
 </style>
 </head>
 <body>
 <h1>חיתוך סדרתי של אותיות</h1>
-<div id="intro">⏱ תוך דקה – ויש לכם פונט אישי!</div>
+<div id="intro">⏱ עוד דקה ויש לכם פונט אישי!</div>
 
 <div id="instructions">
-  1️⃣ מקמו את החיתוך צמוד לאות הרצויה, וודאו שהחיתוך נמצא בשורה אחת<br>
-  2️⃣ עקבו אחרי ההוראות למטה – איזו אות לחתוך, ואם ביטלתם – איזו אות צריך לחתוך שוב<br>
-  3️⃣ כל האותיות מופיעות למעלה, כדי שתוכלו לראות איזו אות כבר נחתכה<br>
-  4️⃣ לאחר שתסיימו – לחצו על "צור פונט", ואז יופיע כפתור ההורדה<br>
-  5️⃣ דוגמה מלאה – <a href="https://www.youtube.com/watch?v=fakeURL" target="_blank" style="color:#ffeb3b;">צפו בסרטון ביוטיוב</a>
+  1️⃣ צמוד לאותה האות שאתם עומדים לחתוך שימו לב שהחיתוך יהיה בשורה<br>
+  2️⃣ עקבו אחרי ההוראות למטה – איזו אות לחתוך ואם ביטלתם אותה – איזו צריך לחתוך שוב<br>
+  3️⃣ יש לכם את כל האותיות למעלה כדי שתראו איזו לחתוך<br>
+  4️⃣ אחרי שסיימתם – לחצו על "צור פונט" והוא יעביר אתכם להורדה<br>
+  5️⃣ דוגמא מלאה – <a href="https://www.youtube.com/watch?v=fakeURL" target="_blank" style="color:#ffeb3b;">צפו בסרטון יוטיוב</a>
 </div>
-
 
 <div id="letters-bar"></div>
 <div id="current-letter">חתכו את האות א</div>
