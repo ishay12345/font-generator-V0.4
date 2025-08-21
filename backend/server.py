@@ -262,7 +262,16 @@ def cardcom_indicator():
 
 @app.route('/thankyou')
 def thankyou():
-    print("[thankyou] עמוד תודה נטען")
+    data = request.args.to_dict()
+    print("[thankyou] עמוד תודה נטען:", data)
+
+    # אם CardCom מחזיר ResponseCode=0 -> תשלום הצליח
+    if data.get("ResponseCode") == "0":
+        session["paid"] = True
+        print("[thankyou] ✅ תשלום אושר – הורדה תותר")
+    else:
+        print("[thankyou] ❌ תשלום נכשל או לא זוהה")
+
     return render_template('thankyou.html')
 
 # ----------------------
