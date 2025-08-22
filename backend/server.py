@@ -224,15 +224,16 @@ def download_font():
         return send_file(FONT_OUTPUT_PATH, as_attachment=True, download_name="my_font.ttf", mimetype="font/ttf")
     return "הפונט עדיין לא נוצר", 404
 
+
 @app.route('/download')
 def download_page():
     font_ready = session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH))
     if not font_ready:
         return redirect(url_for('index'))
 
-    # כאן ודא שהפונקציה download_font קיימת ומוגדרת
     font_url = url_for('download_font')
     return render_template('downloadd.html', font_url=font_url)
+
 
 # ----------------------
 # 💳 תשלום – קארדקום
@@ -240,6 +241,7 @@ def download_page():
 @app.route('/payment')
 def payment():
     return render_template('payment.html')
+
 
 @app.route("/start-payment", methods=["POST"])
 def start_payment():
@@ -249,10 +251,11 @@ def start_payment():
     if not email:
         return "יש להזין כתובת מייל", 400
 
-    # ⚡ יצירת payload כולל פרטי חשבונית
+    # יצירת payload כולל פרטי חשבונית
     payload = create_invoice_payload(name, email, total_sum=1.0)
-    # הוספת codepage ל־POST
     payload["codepage"] = "65001"
+    payload["SuccessRedirectUrl"] = request.host_url + "thankyou"
+    payload["ErrorRedirectUrl"] = request.host_url + "payment"
 
     try:
         resp = requests.post(CARD_COM_API_URL, data=payload)
@@ -267,6 +270,7 @@ def start_payment():
     except Exception as e:
         return f"שגיאה בעת יצירת התשלום: {str(e)}", 500
 
+
 @app.route('/cardcom-indicator', methods=['GET', 'POST'])
 def cardcom_indicator():
     data = request.form.to_dict() if request.method == 'POST' else request.args.to_dict()
@@ -280,9 +284,14 @@ def cardcom_indicator():
 
     return "OK"
 
+
 @app.route('/thankyou')
 def thankyou():
+    if not session.get("paid"):
+        return redirect(url_for('payment'))
+
     return render_template('thankyou.html')
+
 
 # ----------------------
 # 📄 דפים נוספים
@@ -291,11 +300,14 @@ def thankyou():
 def instructions():
     return render_template('instructions.html')
 
+
 @app.route('/faq')
 def faq():
     return render_template('faq.html')
 
+
 # ----------------------
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+
 
