@@ -217,24 +217,12 @@ def generate_font_route():
 # ----------------------
 @app.route('/download')
 def download_page():
-    if not session.get("paid"):
-        return redirect(url_for('payment'))
-
     font_ready = session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH))
     if not font_ready:
         return redirect(url_for('index'))
 
     font_url = url_for('download_font')
     return render_template('downloadd.html', font_url=font_url)
-
-@app.route('/download_font')
-def download_font():
-    if not session.get("paid"):
-        return redirect(url_for('payment'))
-
-    if os.path.exists(FONT_OUTPUT_PATH):
-        return send_file(FONT_OUTPUT_PATH, as_attachment=True, download_name="my_font.ttf", mimetype="font/ttf")
-    return "הפונט עדיין לא נוצר", 404
 
 # ----------------------
 # 💳 תשלום – קארדקום
