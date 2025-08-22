@@ -68,8 +68,12 @@
   <h1>🎉 הפונט שלכם מוכן!</h1>
   <p>כעת נותר לכם רק להוריד אותו ולהתחיל להשתמש בו.</p>
   <!-- כפתור המעביר לדף תשלום -->
-  <a class="download-btn" href="{{ url_for('payment') }}">⬇ הורד עכשיו</a>
-  <p class="note">הורדה תתחיל בדף התשלום לאחר לחיצה על הכפתור</p>
+<a class="download-btn" href="{{ url_for('payment') }}">
+  הורידו את הפונט שלכם 🔒 
+  <span style="text-decoration: line-through; color: gray; margin-right: 5px;">44.90 ₪</span>
+  <span style="font-weight: bold; color: red;">24.90 ₪</span>
+</a>
+<p class="note">הורדה תתחיל אוטומטית אחרי אישור התשלום </p>
 </div>
 
 </body>
