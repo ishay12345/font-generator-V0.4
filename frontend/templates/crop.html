@@ -37,30 +37,14 @@ h1 { margin: 10px; font-size: 2rem; text-shadow: 0 0 8px rgba(0,0,0,0.5),0 0 15p
 .letter.done { background: linear-gradient(135deg, #27ae60, #2ecc71); border: none; color: white; box-shadow: 0 0 12px rgba(46,204,113,0.9); }
 .letter.active { border: 2px solid #fff; background: rgba(52,152,219,0.6); box-shadow:0 0 15px rgba(52,152,219,0.9); }
 #current-letter { font-size: 1.1rem; font-weight: bold; margin: 5px 0; padding: 6px 12px; border-radius: 12px; background: rgba(52, 152, 219, 0.6); color: #fff; text-align: center; min-width: 120px; }
-
 #image-container {
-  position: relative;
-  max-width: 90vw;
-  max-height: 70vh;
-  border: 2px solid rgba(255,255,255,0.4);
-  border-radius: 16px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  touch-action: none;
-  background: transparent;   /* ⬅ הורדתי את הרקע האפור */
+  position: relative; max-width: 90vw; max-height: 70vh; border: 2px solid rgba(255,255,255,0.4);
+  border-radius: 16px; overflow: hidden; display: flex; justify-content: center; align-items: center;
+  user-select: none; touch-action: none; 
+  background: inherit; /* משתלב עם הרקע הכללי */
   box-shadow: 0 8px 25px rgba(0,0,0,0.5);
 }
-#source-image {
-  display: block;
-  max-width: 100%;
-  max-height: 70vh;
-  object-fit: contain;
-  border-radius: 12px;  /* משתלב בעיצוב הכללי */
-}
-
+#source-image { display: block; max-width: 100%; max-height: 70vh; object-fit: contain; }
 #crop-rectangle {
   position: absolute; border: 3px dashed #ff5555; background: rgba(255,85,85,0.15);
   width: 180px; height: 180px; box-sizing: border-box; cursor: move; border-radius: 12px;
@@ -70,8 +54,7 @@ h1 { margin: 10px; font-size: 2rem; text-shadow: 0 0 8px rgba(0,0,0,0.5),0 0 15p
 .resize-handle.nw { top:-8px; left:-8px; cursor:nwse-resize; }
 .resize-handle.ne { top:-8px; right:-8px; cursor:nesw-resize; }
 .resize-handle.sw { bottom:-8px; left:-8px; cursor:nesw-resize; }
-.resize-handle.se { bottom:-8px; right:-8px; cursor:nesw-resize; }
-
+.resize-handle.se { bottom:-8px; right:-8px; cursor:nwse-resize; }
 #controls { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 button {
   padding: 12px 22px; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer;
@@ -93,32 +76,36 @@ button:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 10px 22px 
   1️⃣ צמוד לאותה האות שאתם עומדים לחתוך שימו לב שהחיתוך יהיה בשורה<br>
   2️⃣ עקבו אחרי ההוראות למטה – איזו אות לחתוך ואם ביטלתם אותה – איזו צריך לחתוך שוב<br>
   3️⃣ יש לכם את כל האותיות למעלה כדי שתראו איזו לחתוך<br>
-  4️⃣ אחרי שסיימתם – לחצו על "צור פונט" ואז יופיע כפתור הורדה<br>
+  4️⃣ אחרי שסיימתם – לחצו על "צור פונט" והוא יעביר אתכם להורדה<br>
   5️⃣ דוגמא מלאה – <a href="https://www.youtube.com/watch?v=fakeURL" target="_blank" style="color:#ffeb3b;">צפו בסרטון יוטיוב</a>
 </div>
 
 <div id="letters-bar"></div>
-<div id="current-letter"></div>
+<div id="current-letter">חתכו את האות א</div>
 
 <div id="image-container">
-  <img id="source-image" src="{{ url_for('static', filename='uploads/' + filename) }}" alt="תמונה להעלאה">
-  <div id="crop-rectangle">
-    <div class="resize-handle nw"></div>
-    <div class="resize-handle ne"></div>
-    <div class="resize-handle sw"></div>
-    <div class="resize-handle se"></div>
-  </div>
+  {% if filename %}
+    <img id="source-image" src="{{ url_for('static', filename='uploads/' + filename) }}" alt="תמונה לחיתוך" />
+    <div id="crop-rectangle">
+      <div class="resize-handle nw"></div>
+      <div class="resize-handle ne"></div>
+      <div class="resize-handle sw"></div>
+      <div class="resize-handle se"></div>
+    </div>
+  {% else %}
+    <p style="color:red; font-weight:bold;">לא נטענה תמונה. חזור למסך הראשי ובחר קובץ.</p>
+  {% endif %}
 </div>
 
-<div id="controls">
-  <button id="saveCropBtn">שמור חיתוך</button>
-  <button id="skipBtn">דלג</button>
-  <button id="generateBtn">צור פונט</button>
-  <a id="downloadBtn" href="{{ url_for('download_font') }}">⬇ הורד פונט</a>
+<div id="controls" {% if not filename %}style="display:none;"{% endif %}>
+  <button id="save-crop">שמור אות נוכחית</button>
+  <button id="undo-crop">בטל חיתוך אחרון</button>
+  <button id="generateFontBtn" style="display:none;">צור פונט</button>
+  <a id="downloadFontBtn" href="#" download style="display:none;">⬇ הורד את הפונט</a>
 </div>
-
 <div id="status"></div>
 <div id="progress-container"><div id="progress-bar"></div></div>
+
 <script>
 {% if filename %}
 const lettersBar = document.getElementById('letters-bar');
@@ -141,7 +128,7 @@ function updateLettersBar(){
     child.classList.remove('active');
     if(i===currentIndex) child.classList.add('active');
   });
-  if(currentIndex<letters.length) currentLetterEl.textContent=`חתכו את האות ${letters[currentIndex]}`;
+  if(currentIndex<letters.length) currentLetterEl.textContent=חתכו את האות ${letters[currentIndex]};
 }
 
 // --- Drag & Resize ---
@@ -172,7 +159,7 @@ document.getElementById('save-crop').addEventListener('click', async()=>{
   const cropX=(rect.left-imgRect.left)*scaleX;
   const cropY=(rect.top-imgRect.top)*scaleY;
   const cropW=rect.width*scaleX, cropH=rect.height*scaleY;
-  const cropPosStr=`${Math.round(cropX)},${Math.round(cropY)},${Math.round(cropW)},${Math.round(cropH)}`;
+  const cropPosStr=${Math.round(cropX)},${Math.round(cropY)},${Math.round(cropW)},${Math.round(cropH)};
   if(lastCropPosition===cropPosStr) return alert('לא ניתן לחתוך שוב באותו מיקום. יש להזיז את הריבוע.');
   lastCropPosition=cropPosStr;
 
@@ -190,7 +177,7 @@ document.getElementById('save-crop').addEventListener('click', async()=>{
   if(currentIndex>=letters.length){
     document.getElementById('status').textContent='🎉 כל האותיות נשמרו! לחץ על "צור פונט" כדי להפיק את הפונט.';
     generateBtn.style.display='inline-block';
-  } else document.getElementById('status').textContent=`✅ האות "${letters[currentIndex-1]}" נשמרה!`;
+  } else document.getElementById('status').textContent=✅ האות "${letters[currentIndex-1]}" נשמרה!;
 });
 
 // Undo
@@ -198,7 +185,7 @@ document.getElementById('undo-crop').addEventListener('click',()=>{
   if(history.length===0) return;
   currentIndex=history.pop();
   lettersBar.children[currentIndex].classList.remove('done');
-  document.getElementById('status').textContent=`🔄 חיתוך האות "${letters[currentIndex]}" בוטל.`;
+  document.getElementById('status').textContent=🔄 חיתוך האות "${letters[currentIndex]}" בוטל.;
   updateLettersBar();
 });
 
