@@ -5,9 +5,10 @@ import requests
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask import send_file
 from werkzeug.utils import secure_filename
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, urlencode
 from email.message import EmailMessage
 import smtplib
+from datetime import datetime
 
 # פונקציות עיבוד
 from process_image import convert_to_black_white, normalize_and_center_glyph
@@ -57,6 +58,51 @@ LETTERS_ORDER = [
     "qof","resh","shin","tav","finalkaf","finalmem","finalnun",
     "finalpe","finaltsadi"
 ]
+
+# ----------------------
+# פונקציות יצירת חשבונית
+# ----------------------
+def create_invoice_payload(name, email, total_sum=1.0):
+    """
+    מחזיר מילון של פרמטרים ליצירת חשבונית בזמן בקשת החיוב
+    """
+    now_str = datetime.now().strftime("%d/%m/%Y")
+    payload = {
+        "TerminalNumber": CARD_COM_TERMINAL,
+        "UserName": CARD_COM_USER,
+        "APILevel": "10",
+        "Operation": "1",
+        "Language": "he",
+        "CoinID": "1",
+        "SumToBill": f"{total_sum:.2f}",
+        "ProductName": "פונט אישי",
+        "SuccessRedirectUrl": request.host_url + "thankyou",
+        "ErrorRedirectUrl": request.host_url + "payment",
+        "IndicatorUrl": request.host_url + "cardcom-indicator",
+        "CustomerEmail": email,
+        "CustomerName": name,
+        # ⚡ פרטי החשבונית – InvExtHead
+        "InvoiceHead.CustName": name,
+        "InvoiceHead.SendByEmail": "true",
+        "InvoiceHead.Language": "he",
+        "InvoiceHead.Email": email,
+        "InvoiceHead.CompID": "123456789",  # ת.ז./ח.פ של הלקוח
+        "InvoiceHead.IsAutoCreateUpdateAccount": "true",
+        "InvoiceHead.ExtIsVatFree": "true",
+        "InvoiceHead.Date": now_str,
+    }
+
+    # ⚡ שורות החשבונית
+    # כאן נניח שורה אחת עם פריט יחיד
+    payload.update({
+        "InvoiceLines1.Description": "פונט אישי",
+        "InvoiceLines1.Price": f"{total_sum:.2f}",
+        "InvoiceLines1.Quantity": "1",
+        "InvoiceLines1.IsVatFree": "true"
+    })
+
+    # urlencode לכל הערכים
+    return {k: v for k, v in payload.items()}
 
 # ----------------------
 # 🔠 דף הבית
@@ -205,21 +251,10 @@ def start_payment():
     if not email:
         return "יש להזין כתובת מייל", 400
 
-    payload = {
-        "TerminalNumber": CARD_COM_TERMINAL,
-        "UserName": CARD_COM_USER,
-        "APILevel": "10",
-        "Operation": "1",  # חיוב רגיל
-        "Language": "he",
-        "CoinID": "1",
-        "SumToBill": "1.00",
-        "ProductName": "פונט אישי",
-        "SuccessRedirectUrl": request.host_url + "thankyou",
-        "ErrorRedirectUrl": request.host_url + "payment",
-        "IndicatorUrl": request.host_url + "cardcom-indicator",
-        "CustomerEmail": email,
-        "CustomerName": name,
-    }
+    # ⚡ יצירת payload כולל פרטי חשבונית
+    payload = create_invoice_payload(name, email, total_sum=1.0)
+    # הוספת codepage ל־POST
+    payload["codepage"] = "65001"
 
     try:
         resp = requests.post(CARD_COM_API_URL, data=payload)
@@ -263,31 +298,6 @@ def faq():
     return render_template('faq.html')
 
 # ----------------------
-# 📧 שליחת חשבונית
-# ----------------------
-def send_invoice(email, name):
-    try:
-        invoice_path = os.path.join(INVOICE_FOLDER, f"invoice_{name}.pdf")
-        # כאן ניתן ליצור PDF עם ספריית ReportLab או אחרת, כרגע יוצרים קובץ Placeholder
-        with open(invoice_path, "wb") as f:
-            f.write(b"%PDF-1.4\n% Placeholder invoice")
-
-        msg = EmailMessage()
-        msg['Subject'] = "חשבונית עבור הפונט האישי שלך"
-        msg['From'] = EMAIL_USER
-        msg['To'] = email
-        msg.set_content(f"שלום {name},\n\nתודה על הרכישה! מצורפת החשבונית.\n\n-- צוות הפונט")
-        with open(invoice_path, "rb") as f:
-            msg.add_attachment(f.read(), maintype='application', subtype='pdf', filename=os.path.basename(invoice_path))
-
-        with smtplib.SMTP(EMAIL_SERVER, EMAIL_PORT) as server:
-            server.starttls()
-            server.login(EMAIL_USER, EMAIL_PASSWORD)
-            server.send_message(msg)
-        print(f"[send_invoice] ✅ חשבונית נשלחה ל-{email}")
-    except Exception as e:
-        print(f"[send_invoice] ❌ שגיאה בשליחת חשבונית: {e}")
-
-# ----------------------
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+
