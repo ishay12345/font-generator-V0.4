@@ -45,6 +45,7 @@
       margin-bottom: 30px;
       color: #ffffff;
       text-shadow: 0 0 10px rgba(0,0,0,0.4);
+      text-align: center;
     }
 
     .step {
@@ -99,6 +100,7 @@
       font-size: 1em;
       color: #f5f5f5;
       text-shadow: 0 0 8px rgba(0,0,0,0.3);
+      text-align: center;
     }
 
     .back-btn {
@@ -131,6 +133,56 @@
       background: #9138e5;
       z-index: -2;
     }
+
+    /* רספונסיביות לטאבלט וטלפון */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2em;
+      }
+      .step {
+        padding: 20px 25px;
+      }
+      .step-number {
+        font-size: 1.4em;
+      }
+      .step-text {
+        font-size: 1.1em;
+      }
+      .example-link {
+        padding: 8px 18px;
+        font-size: 0.95em;
+      }
+      .footer {
+        font-size: 0.95em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.6em;
+      }
+      .step {
+        padding: 15px 20px;
+      }
+      .step-number {
+        font-size: 1.2em;
+      }
+      .step-text {
+        font-size: 1em;
+      }
+      .example-link {
+        padding: 6px 16px;
+        font-size: 0.9em;
+      }
+      .footer {
+        font-size: 0.9em;
+      }
+      .back-btn {
+        font-size: 0.85em;
+        padding: 8px 16px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -157,7 +209,7 @@
       <div class="step-text">
         כתבו את כל האותיות העבריות בסדר א-ב בצורה ברורה ונקייה, עם רווחים בין השורות.<br>
         כתבו בכל שורה <strong>4 אותיות בלבד</strong>, כדי לאפשר חיתוך נוח.<br>
-        בסיום – כתבו את האותיות הסופיות לפי הסדר הבא בלבד: <strong>ך, ם, ן, ף, ץ</strong>. סדר שונה עלול לפגוע בתוצאה.
+        בסיום – כתבו את האותיות הסופיות לפי הסדר הבא בלבד: <strong>ך, ם, ן, ף, ץ</strong>. 
         <br><br>
         ✅ רוצים דוגמה מוכנה? 
         <a href="{{ url_for('static', filename='exp_pic.jpg') }}" download class="example-link">לחצו כאן להורדת תמונה לדוגמה</a>
@@ -180,7 +232,7 @@
     </div>
 
     <div class="footer">
-      לכל בעיה אפשר לשלוח הודעה בוואצאפ למס' <strong>055-678-6895</strong> 😇
+      לכל בעיה אפשר לשלוח הודעה לשירות לקוחות שלנו בוואצאפ למס' <strong>055-678-6895</strong> 😇
     </div>
   </div>
 
