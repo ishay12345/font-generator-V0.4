@@ -190,28 +190,31 @@ def save_crop():
 @app.route('/generate_font', methods=['POST'])
 def generate_font_route():
     try:
+        # מנסה ליצור את הפונט
         generate_ttf(svg_folder=SVG_DIR, output_ttf=FONT_OUTPUT_PATH)
 
+        # בדיקה אם הקובץ נוצר
         if os.path.exists(FONT_OUTPUT_PATH):
             session['font_ready'] = True
             return jsonify({
                 "status": "success",
                 "download_url": url_for('download_page')
             })
-        else:
-            session['font_ready'] = False
-            return jsonify({
-                "status": "error",
-                "message": "❌ הפונט לא נוצר."
-            })
-
-    except Exception as e:
+        
+        # אם לא נוצר, מחזירים הודעת שגיאה ברורה
         session['font_ready'] = False
         return jsonify({
             "status": "error",
-            "message": f"❌ שגיאה: {str(e)}"
+            "message": "❌ הפונט לא נוצר. בדוק אם קיימים קבצי SVG בתיקייה."
         })
 
+    except Exception as e:
+        # טיפול בשגיאות לא צפויות
+        session['font_ready'] = False
+        return jsonify({
+            "status": "error",
+            "message": f"❌ שגיאה בלתי צפויה בזמן יצירת הפונט: {str(e)}"
+        })
 # ----------------------
 # ⬇️ הורדת פונט
 # ----------------------
