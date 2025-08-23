@@ -6,27 +6,111 @@
   <title>תודה על הרכישה!</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&display=swap');
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Heebo', sans-serif; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Heebo', sans-serif;
+    }
+
     body {
       background: linear-gradient(135deg, #6bd6ff, #9138e5);
-      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
+
     .thankyou-container {
-      background: white; padding: 40px; border-radius: 20px; text-align: center;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.2); max-width: 600px; width: 100%;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      max-width: 600px;
+      width: 100%;
       animation: fadeIn 1s ease-in-out;
     }
-    .thankyou-container h1 { font-size: 2.5em; color: #2d006b; margin-bottom: 20px; }
-    .thankyou-container p { font-size: 1.2em; color: #333; margin-bottom: 30px; }
-    .download-btn {
-      background: linear-gradient(45deg, #ff8a00, #e52e71); border: none; color: white;
-      font-size: 1.1em; padding: 12px 30px; border-radius: 30px; cursor: pointer;
-      transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      text-decoration: none; display: inline-block;
+
+    .thankyou-container h1 {
+      font-size: 2.5em;
+      color: #2d006b;
+      margin-bottom: 20px;
     }
-    .download-btn:hover { transform: scale(1.05); background: linear-gradient(45deg, #e52e71, #ff8a00); }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .note { margin-top: 25px; font-size: 0.9em; color: #777; }
+
+    .thankyou-container p {
+      font-size: 1.2em;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    .download-btn {
+      background: linear-gradient(45deg, #ff8a00, #e52e71);
+      border: none;
+      color: white;
+      font-size: 1.1em;
+      padding: 12px 30px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .download-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(45deg, #e52e71, #ff8a00);
+    }
+
+    .note {
+      margin-top: 25px;
+      font-size: 0.9em;
+      color: #777;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* רספונסיביות לטאבלט וטלפון */
+    @media (max-width: 768px) {
+      .thankyou-container {
+        padding: 30px;
+      }
+      .thankyou-container h1 {
+        font-size: 2em;
+      }
+      .thankyou-container p {
+        font-size: 1.1em;
+      }
+      .download-btn {
+        font-size: 1em;
+        padding: 10px 25px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .thankyou-container {
+        padding: 20px;
+      }
+      .thankyou-container h1 {
+        font-size: 1.6em;
+      }
+      .thankyou-container p {
+        font-size: 1em;
+      }
+      .download-btn {
+        font-size: 0.95em;
+        padding: 8px 20px;
+      }
+      .note {
+        font-size: 0.85em;
+      }
+    }
   </style>
 </head>
 <body>
@@ -45,3 +129,4 @@
   </script>
 </body>
 </html>
+
