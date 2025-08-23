@@ -60,6 +60,27 @@
 
   @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   .note { margin-top: 20px; font-size: 0.95em; color: #fff; opacity: 0.85; }
+
+  /* רספונסיביות לטלפונים וטאבלטים */
+  @media (max-width: 768px) {
+    .container {
+      padding: 35px 25px;
+    }
+    h1 { font-size: 1.6rem; }
+    p { font-size: 1rem; margin-bottom: 20px; }
+    .download-btn { font-size: 1em; padding: 14px 30px; }
+    .note { font-size: 0.85em; }
+  }
+
+  @media (max-width: 480px) {
+    .container {
+      padding: 25px 15px;
+    }
+    h1 { font-size: 1.4rem; }
+    p { font-size: 0.95rem; margin-bottom: 15px; }
+    .download-btn { font-size: 0.95em; padding: 12px 25px; }
+    .note { font-size: 0.8em; }
+  }
 </style>
 </head>
 <body>
@@ -68,12 +89,12 @@
   <h1>🎉 הפונט שלכם מוכן!</h1>
   <p>כעת נותר לכם רק להוריד אותו ולהתחיל להשתמש בו.</p>
   <!-- כפתור המעביר לדף תשלום -->
-<a class="download-btn" href="{{ url_for('payment') }}">
-  הורידו את הפונט שלכם 🔒 
-  <span style="text-decoration: line-through; color: gray; margin-right: 5px;">44.90 ₪</span>
-  <span style="font-weight: bold; color: red;">24.90 ₪</span>
-</a>
-<p class="note">הורדה תתחיל אוטומטית אחרי אישור התשלום </p>
+  <a class="download-btn" href="{{ url_for('payment') }}">
+    הורידו את הפונט שלכם 🔒 
+    <span style="text-decoration: line-through; color: gray; margin-right: 5px;">44.90 ₪</span>
+    <span style="font-weight: bold; color: red;">24.90 ₪</span>
+  </a>
+  <p class="note">הורדה תתחיל אוטומטית אחרי אישור התשלום </p>
 </div>
 
 </body>
