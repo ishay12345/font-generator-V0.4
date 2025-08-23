@@ -43,13 +43,20 @@ h1 { margin: 10px; font-size: 2rem; text-shadow: 0 0 8px rgba(0,0,0,0.5),0 0 15p
 
 #image-container {
   position: relative;
-  width: 90vw; max-height: 70vh;
-  border-radius: 16px; overflow: hidden;
-  display: flex; justify-content: center; align-items: center;
-  user-select: none; touch-action: none;
-  background: rgba(0,0,0,0.25);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+  width: 90vw; 
+  max-height: 70vh;
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  user-select: none; 
+  touch-action: none;
+}
+
+#source-image {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 #crop-rectangle {
@@ -90,9 +97,9 @@ button:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 10px 22px 
 <div id="intro">⏱ עוד דקה ויש לכם פונט אישי!</div>
 
 <div id="instructions">
-  1️⃣ חתכו את האות בתוך בריבוע יחסית צמוד אל תתנו מרווח גדול מידי מסביב<br>
+  1️⃣ חתכו את האות בתוך הריבוע יחסית ברווח  אבל לא יותר מידי <br>
   2️⃣ עקבו אחרי ההוראות למטה – איזו אות לחתוך ואם ביטלתם אותה – איזו צריך לחתוך שוב<br>
-  3️⃣ יש לכם את כל האותיות למעלה כדי שתראו איזו לחתוך<br>
+  3️⃣ יש לכם את פס האותיות האותיות למעלה כדי שתראו איזו לחתוך<br>
   4️⃣ אחרי שסיימתם – לחצו על "צור פונט" והוא יעביר אתכם להורדה<br>
   5️⃣ דוגמא מלאה – <a href="https://www.youtube.com/watch?v=fakeURL" target="_blank" style="color:#ffeb3b;">צפו בסרטון יוטיוב</a>
 </div>
