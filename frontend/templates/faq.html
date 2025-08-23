@@ -24,6 +24,7 @@
       margin-top: 30px;
       margin-bottom: 30px;
       text-shadow: 0 0 10px rgba(0,0,0,0.3);
+      text-align: center;
     }
 
     .faq-container {
@@ -66,13 +67,36 @@
       opacity: 0.9;
     }
 
-    @media (max-width: 600px) {
+    /* רספונסיביות לטאבלט וטלפון */
+    @media (max-width: 768px) {
+      .faq-container {
+        padding: 25px;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+
+      .question h3 {
+        font-size: 1.1em;
+      }
+
+      .question p {
+        font-size: 1em;
+      }
+
+      .contact-note {
+        font-size: 0.9em;
+      }
+    }
+
+    @media (max-width: 480px) {
       .faq-container {
         padding: 20px;
       }
 
       h1 {
-        font-size: 1.6em;
+        font-size: 1.5em;
       }
 
       .question h3 {
@@ -80,7 +104,7 @@
       }
 
       .question p {
-        font-size: 0.95em;
+        font-size: 0.9em;
       }
 
       .contact-note {
@@ -95,7 +119,7 @@
   <div class="faq-container">
     <div class="question">
       <h3>1. איך אני מקבל את הפונט ומכניס אותו ל-Word?</h3>
-      <p>אחרי שאתה משלים את התהליך אתה תקבל אוטומטית למחשב קובץ. לאחר שתפתח אותו, תוכל ללחוץ על האופציה של הורדה. תוריד אותו, ולאחר מכן תדליק מחדש את המחשב. תיכנס ל-Word, בפונטים, ותחפש את השם "Hebrew Handwriting".</p>
+      <p>אחרי שאתה תשלים את התהליך אתה תקבל אוטומטית למחשב קובץ. לאחר שתפתח אותו, תוכל ללחוץ על האופציה של התקן. תוריד אותו, ולאחר מכן תדליק מחדש את המחשב. תיכנס ל-Word, בפונטים, ותחפש את השם "Hebrew Handwriting".</p>
     </div>
 
     <div class="question">
@@ -104,8 +128,8 @@
     </div>
 
     <div class="question">
-      <h3>3. איך אני מוריד את הקובץ?</h3>
-      <p>לאחר הקנייה אתה תועבר לדף שיוריד לך אוטומטית את הפונט למחשב שלך. בנוסף יהיה לך כפתור לוודא שתוכל להוריד את הקובץ ידנית.</p>
+      <h3>3. האם יכולות להווצר בעיות במהלך הכתיבה?</h3>
+      <p>בעקרון אין עיות בקוד עצמו אבל בגלל שה word לא יקלוט שזה בעברית אז לפעמים המילה תעצור באמצע שורה פשוט תעברו שורה למטה.</p>
     </div>
 
     <div class="contact-note">
