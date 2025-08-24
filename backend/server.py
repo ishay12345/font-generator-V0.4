@@ -63,6 +63,9 @@ LETTERS_ORDER = [
 # פונקציות יצירת חשבונית
 # ----------------------
 def create_invoice_payload(name, email, total_sum=1.0):
+    """
+    מחזיר מילון של פרמטרים ליצירת חשבונית בזמן בקשת החיוב
+    """
     now_str = datetime.now().strftime("%d/%m/%Y")
     payload = {
         "TerminalNumber": CARD_COM_TERMINAL,
@@ -78,21 +81,27 @@ def create_invoice_payload(name, email, total_sum=1.0):
         "IndicatorUrl": request.host_url + "cardcom-indicator",
         "CustomerEmail": email,
         "CustomerName": name,
+        # ⚡ פרטי החשבונית – InvExtHead
         "InvoiceHead.CustName": name,
         "InvoiceHead.SendByEmail": "true",
         "InvoiceHead.Language": "he",
         "InvoiceHead.Email": email,
-        "InvoiceHead.CompID": "123456789",
+        "InvoiceHead.CompID": "123456789",  # ת.ז./ח.פ של הלקוח
         "InvoiceHead.IsAutoCreateUpdateAccount": "true",
         "InvoiceHead.ExtIsVatFree": "true",
         "InvoiceHead.Date": now_str,
     }
+
+    # ⚡ שורות החשבונית
+    # כאן נניח שורה אחת עם פריט יחיד
     payload.update({
         "InvoiceLines1.Description": "פונט אישי",
         "InvoiceLines1.Price": f"{total_sum:.2f}",
         "InvoiceLines1.Quantity": "1",
         "InvoiceLines1.IsVatFree": "true"
     })
+
+    # urlencode לכל הערכים
     return {k: v for k, v in payload.items()}
 
 # ----------------------
@@ -139,7 +148,7 @@ def crop():
     if not filename:
         return render_template('crop.html', error="אין תמונה זמינה לחיתוך")
 
-    path_check = os.path.join(PROCESSED_DIR, filename)
+    path_check = os.path.join(UPLOADS_DIR, filename)
     if not os.path.exists(path_check):
         return render_template('crop.html', error="התמונה המבוקשת לא נמצאה בדיסק")
 
@@ -187,20 +196,20 @@ def generate_font_route():
             session['font_ready'] = True
             return jsonify({
                 "status": "success",
-                "download_url": url_for('thankyou')
+                "download_url": url_for('download_page')
             })
-        
-        session['font_ready'] = False
-        return jsonify({
-            "status": "error",
-            "message": "❌ הפונט לא נוצר. בדוק אם קיימים קבצי SVG בתיקייה."
-        })
+        else:
+            session['font_ready'] = False
+            return jsonify({
+                "status": "error",
+                "message": "❌ הפונט לא נוצר."
+            })
 
     except Exception as e:
         session['font_ready'] = False
         return jsonify({
             "status": "error",
-            "message": f"❌ שגיאה בלתי צפויה בזמן יצירת הפונט: {str(e)}"
+            "message": f"❌ שגיאה: {str(e)}"
         })
 
 # ----------------------
@@ -215,12 +224,24 @@ def download_font():
         return send_file(FONT_OUTPUT_PATH, as_attachment=True, download_name="my_font.ttf", mimetype="font/ttf")
     return "הפונט עדיין לא נוצר", 404
 
+
+@app.route('/download')
+def download_page():
+    font_ready = session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH))
+    if not font_ready:
+        return redirect(url_for('index'))
+
+    font_url = url_for('download_font')
+    return render_template('downloadd.html', font_url=font_url)
+
+
 # ----------------------
 # 💳 תשלום – קארדקום
 # ----------------------
 @app.route('/payment')
 def payment():
     return render_template('payment.html')
+
 
 @app.route("/start-payment", methods=["POST"])
 def start_payment():
@@ -230,6 +251,7 @@ def start_payment():
     if not email:
         return "יש להזין כתובת מייל", 400
 
+    # יצירת payload כולל פרטי חשבונית
     payload = create_invoice_payload(name, email, total_sum=1.0)
     payload["codepage"] = "65001"
     payload["SuccessRedirectUrl"] = request.host_url + "thankyou"
@@ -248,29 +270,28 @@ def start_payment():
     except Exception as e:
         return f"שגיאה בעת יצירת התשלום: {str(e)}", 500
 
-# ----------------------
-# ⚡ פונקציה לשליחת חשבונית
-def send_invoice(email, name):
-    print(f"Invoice sent to {email} ({name})")
-    # כאן ניתן לשלב שליחת מייל אמיתי בעתיד
 
-# ----------------------
 @app.route('/cardcom-indicator', methods=['GET', 'POST'])
 def cardcom_indicator():
     data = request.form.to_dict() if request.method == 'POST' else request.args.to_dict()
+
     if data.get("OperationResponse") == "0":  # תשלום הצליח
         session["paid"] = True
+        # שליחת חשבונית אוטומטית
         send_invoice(session.get("customer_email"), session.get("customer_name"))
     else:
         session["paid"] = False
-    return redirect(url_for('thankyou'))
+
+    return "OK"
+
 
 @app.route('/thankyou')
 def thankyou():
-    # משתמש תמיד מגיע לדף זה
-    font_ready = session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH))
-    font_url = url_for('download_font') if font_ready else None
-    return render_template('thankyou.html', font_url=font_url)
+    if not session.get("paid"):
+        return redirect(url_for('payment'))
+
+    return render_template('thankyou.html')
+
 
 # ----------------------
 # 📄 דפים נוספים
@@ -279,12 +300,15 @@ def thankyou():
 def instructions():
     return render_template('instructions.html')
 
+
 @app.route('/faq')
 def faq():
     return render_template('faq.html')
 
+
 # ----------------------
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+
 
 
