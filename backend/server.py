@@ -62,7 +62,7 @@ LETTERS_ORDER = [
 # ----------------------
 # פונקציות יצירת חשבונית
 # ----------------------
-def create_invoice_payload(name, email, total_sum=1.0):
+def create_invoice_payload(name, email, total_sum=24.90):
     """
     מחזיר מילון של פרמטרים ליצירת חשבונית בזמן בקשת החיוב
     """
