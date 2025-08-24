@@ -139,7 +139,7 @@ def crop():
     if not filename:
         return render_template('crop.html', error="אין תמונה זמינה לחיתוך")
 
-    path_check = os.path.join(UPLOADS_DIR, filename)
+    path_check = os.path.join(PROCESSED_DIR, filename)
     if not os.path.exists(path_check):
         return render_template('crop.html', error="התמונה המבוקשת לא נמצאה בדיסק")
 
@@ -187,7 +187,7 @@ def generate_font_route():
             session['font_ready'] = True
             return jsonify({
                 "status": "success",
-                "download_url": url_for('download_page')
+                "download_url": url_for('thankyou')
             })
         
         session['font_ready'] = False
@@ -215,27 +215,12 @@ def download_font():
         return send_file(FONT_OUTPUT_PATH, as_attachment=True, download_name="my_font.ttf", mimetype="font/ttf")
     return "הפונט עדיין לא נוצר", 404
 
-
-@app.route('/download')
-def download_page():
-    font_ready = session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH))
-    if not font_ready:
-        return redirect(url_for('index'))
-
-    font_url = url_for('download_font')
-    return render_template('downloadd.html', font_url=font_url)
-
-
-# ----------------------
-# 💳 תשלום – קארדקום
-# ----------------------
 # ----------------------
 # 💳 תשלום – קארדקום
 # ----------------------
 @app.route('/payment')
 def payment():
     return render_template('payment.html')
-
 
 @app.route("/start-payment", methods=["POST"])
 def start_payment():
@@ -264,32 +249,25 @@ def start_payment():
         return f"שגיאה בעת יצירת התשלום: {str(e)}", 500
 
 # ----------------------
-# ⚡ פונקציה זמנית לשליחת חשבונית – למניעת שגיאה
+# ⚡ פונקציה לשליחת חשבונית
 def send_invoice(email, name):
-    # כרגע רק מדפיס כדי למנוע NameError
     print(f"Invoice sent to {email} ({name})")
-    # כאן אפשר לשים קוד לשליחת מייל אמיתי בעתיד
+    # כאן ניתן לשלב שליחת מייל אמיתי בעתיד
 
 # ----------------------
 @app.route('/cardcom-indicator', methods=['GET', 'POST'])
 def cardcom_indicator():
     data = request.form.to_dict() if request.method == 'POST' else request.args.to_dict()
-
     if data.get("OperationResponse") == "0":  # תשלום הצליח
         session["paid"] = True
         send_invoice(session.get("customer_email"), session.get("customer_name"))
-        # מחזירים redirect לדף תודה עם פרמטר שמציין תשלום
-        return redirect(url_for('thankyou', paid="1"))
     else:
         session["paid"] = False
-        return redirect(url_for('payment'))
+    return redirect(url_for('thankyou'))
 
 @app.route('/thankyou')
 def thankyou():
-    # בודקים session וגם פרמטר GET כדי לאפשר כניסה גם אם session לא נשמר
-    if not session.get("paid") and request.args.get("paid") != "1":
-        return redirect(url_for('payment'))
-
+    # משתמש תמיד מגיע לדף זה
     font_ready = session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH))
     font_url = url_for('download_font') if font_ready else None
     return render_template('thankyou.html', font_url=font_url)
@@ -301,13 +279,10 @@ def thankyou():
 def instructions():
     return render_template('instructions.html')
 
-
 @app.route('/faq')
 def faq():
     return render_template('faq.html')
 
-
 # ----------------------
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-
