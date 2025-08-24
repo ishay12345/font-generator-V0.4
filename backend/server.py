@@ -229,6 +229,9 @@ def download_page():
 # ----------------------
 # 💳 תשלום – קארדקום
 # ----------------------
+# ----------------------
+# 💳 תשלום – קארדקום
+# ----------------------
 @app.route('/payment')
 def payment():
     return render_template('payment.html')
@@ -275,19 +278,21 @@ def cardcom_indicator():
     if data.get("OperationResponse") == "0":  # תשלום הצליח
         session["paid"] = True
         send_invoice(session.get("customer_email"), session.get("customer_name"))
+        # מחזירים redirect לדף תודה עם פרמטר שמציין תשלום
+        return redirect(url_for('thankyou', paid="1"))
     else:
         session["paid"] = False
-
-    return "OK"
-
+        return redirect(url_for('payment'))
 
 @app.route('/thankyou')
 def thankyou():
-    if not session.get("paid"):
+    # בודקים session וגם פרמטר GET כדי לאפשר כניסה גם אם session לא נשמר
+    if not session.get("paid") and request.args.get("paid") != "1":
         return redirect(url_for('payment'))
 
-    return render_template('thankyou.html')
-
+    font_ready = session.get('font_ready', os.path.exists(FONT_OUTPUT_PATH))
+    font_url = url_for('download_font') if font_ready else None
+    return render_template('thankyou.html', font_url=font_url)
 
 # ----------------------
 # 📄 דפים נוספים
