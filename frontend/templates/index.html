@@ -222,7 +222,7 @@
     <!-- שליחת התמונה לשרת -->
     <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
       <input type="file" id="file" name="image" accept="image/*" required />
-      <label id="file-label">בחר תמונה</label><br />
+      <label id="file-label" for="file">בחר תמונה</label><br />
       <button type="submit" id="submit-btn">שלח תמונה</button>
     </form>
 
@@ -263,10 +263,9 @@
       "shapes": ["c"]
     });
 
-    // שינוי צבע הכפתור ולחיצה על label לפתיחת דיאלוג הקובץ
+    // שינוי צבע הכפתור לאחר לחיצה
     const fileLabel = document.getElementById('file-label');
     fileLabel.addEventListener('click', () => {
-      document.getElementById('file').click();
       fileLabel.style.background = 'gray';
       fileLabel.style.color = 'white';
     });
