@@ -16,61 +16,21 @@ body {
   background-size: 300% 300%;
   animation: gradientMove 15s ease infinite;
 }
-
-@keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
+@keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 h1 { margin: 10px; font-size: 2rem; text-shadow: 0 0 8px rgba(0,0,0,0.5),0 0 15px rgba(255,255,255,0.6);}
 #intro { font-size: 1.2rem; margin: 10px; text-align: center; text-shadow: 0 0 6px rgba(0,0,0,0.6);}
-#instructions {
-  font-size: 0.95rem; margin: 10px; max-width: 90vw; line-height: 1.5;
-  background: rgba(0,0,0,0.3); padding: 12px 16px; border-radius: 12px; backdrop-filter: blur(6px);
-}
+#instructions { font-size: 0.95rem; margin: 10px; max-width: 90vw; line-height: 1.5; background: rgba(0,0,0,0.3); padding: 12px 16px; border-radius: 12px; backdrop-filter: blur(6px); }
 #letters-bar { display: flex; flex-wrap: wrap; justify-content: center; max-width: 90vw; margin: 10px 0; gap: 8px; }
-.letter {
-  padding: 8px 12px; border-radius: 12px; cursor: pointer; user-select: none;
-  background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(6px); color: #fff; font-weight: bold; transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
+.letter { padding: 8px 12px; border-radius: 12px; cursor: pointer; user-select: none; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); backdrop-filter: blur(6px); color: #fff; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.2);}
 .letter:hover { transform: scale(1.08); box-shadow: 0 0 10px rgba(255,255,255,0.7); }
 .letter.done { background: linear-gradient(135deg, #27ae60, #2ecc71); border: none; color: white; box-shadow: 0 0 12px rgba(46,204,113,0.9); }
 .letter.active { border: 2px solid #fff; background: rgba(52,152,219,0.6); box-shadow:0 0 15px rgba(52,152,219,0.9); }
 #current-letter { font-size: 1.1rem; font-weight: bold; margin: 5px 0; padding: 6px 12px; border-radius: 12px; background: rgba(52, 152, 219, 0.6); color: #fff; text-align: center; min-width: 120px; }
 
-#image-container {
-  position: relative;
-  width: 90vw; 
-  max-height: 70vh;
-  display: flex; 
-  justify-content: center; 
-  align-items: center;
-  user-select: none; 
-  touch-action: none;
-}
+#image-container { position: relative; width: 90vw; max-height: 70vh; display: flex; justify-content: center; align-items: center; user-select: none; touch-action: none; }
+#source-image { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
 
-#source-image {
-  display: block;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-#crop-rectangle {
-  position: absolute;
-  border: 3px dashed #ff5555;
-  background: rgba(255,85,85,0.15);
-  width: 180px;
-  height: 180px;
-  top: 0;
-  left: 0;
-  cursor: move;
-  border-radius: 12px;
-  box-shadow: 0 0 18px rgba(255,85,85,0.7);
-}
+#crop-rectangle { position: absolute; border: 3px dashed #ff5555; background: rgba(255,85,85,0.15); width: 180px; height: 180px; top: 0; left: 0; cursor: move; border-radius: 12px; box-shadow: 0 0 18px rgba(255,85,85,0.7); }
 
 .resize-handle { position: absolute; width: 16px; height: 16px; background: #ff5555; border-radius: 50%; box-shadow: 0 0 8px rgba(255,85,85,0.9); }
 .resize-handle.nw { top:-8px; left:-8px; cursor:nwse-resize; }
@@ -79,11 +39,7 @@ h1 { margin: 10px; font-size: 2rem; text-shadow: 0 0 8px rgba(0,0,0,0.5),0 0 15p
 .resize-handle.se { bottom:-8px; right:-8px; cursor:nwse-resize; }
 
 #controls { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-button {
-  padding: 12px 22px; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer;
-  color: #fff; background: linear-gradient(135deg, #3498db, #9b59b6); box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-  backdrop-filter: blur(6px); text-decoration: none; transition: all 0.3s ease;
-}
+button { padding: 12px 22px; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer; color: #fff; background: linear-gradient(135deg, #3498db, #9b59b6); box-shadow: 0 6px 18px rgba(0,0,0,0.3); backdrop-filter: blur(6px); text-decoration: none; transition: all 0.3s ease; }
 button:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 10px 22px rgba(0,0,0,0.45); background: linear-gradient(135deg, #2980b9, #8e44ad); }
 
 #status { margin-top: 12px; font-weight: bold; color: #ffeb3b; min-height: 1.2em; text-shadow:0 0 8px rgba(0,0,0,0.6); }
@@ -129,6 +85,7 @@ button:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 10px 22px 
 </div>
 <div id="status"></div>
 <div id="progress-container"><div id="progress-bar"></div></div>
+
 <script>
 {% if filename %}
 const lettersBar = document.getElementById('letters-bar');
@@ -151,7 +108,7 @@ function updateLettersBar(){
     child.classList.remove('active');
     if(i===currentIndex) child.classList.add('active');
   });
-  if(currentIndex<letters.length) currentLetterEl.textContent=חתכו את האות ${letters[currentIndex]};
+  if(currentIndex<letters.length) currentLetterEl.textContent=`חתכו את האות ${letters[currentIndex]}`;
 }
 
 // --- Drag & Resize ---
@@ -161,9 +118,10 @@ const container=document.getElementById('image-container');
 let drag=false, resize=false, resizeDir='', startX,startY, origX,origY, origW,origH, lastCropPosition=null;
 const minWidth=30,minHeight=30;
 
-function getEventPos(e){return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY};}
+function getEventPos(e){ return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY}; }
 function clamp(val,min,max){return Math.min(Math.max(val,min),max);}
 
+// --- Drag ---
 cropRect.addEventListener('mousedown', startDrag);
 cropRect.addEventListener('touchstart', startDrag, {passive:false});
 
@@ -172,11 +130,11 @@ function startDrag(e){
   e.preventDefault(); 
   drag=true; 
   const pos=getEventPos(e); 
-  startX=pos.x; 
-  startY=pos.y; 
+  startX=pos.x; startY=pos.y;
   const rect=cropRect.getBoundingClientRect();
-  origX=rect.left - container.getBoundingClientRect().left;
-  origY=rect.top - container.getBoundingClientRect().top;
+  const contRect=container.getBoundingClientRect();
+  origX=rect.left-contRect.left;
+  origY=rect.top-contRect.top;
   window.addEventListener('mousemove',onDrag);
   window.addEventListener('touchmove',onDrag,{passive:false});
   window.addEventListener('mouseup',stopDrag);
@@ -202,7 +160,7 @@ function stopDrag(){
   window.removeEventListener('touchend',stopDrag);
 }
 
-// --- Resize Handles ---
+// --- Resize ---
 document.querySelectorAll('.resize-handle').forEach(h=>{
   h.addEventListener('mousedown', startResize); 
   h.addEventListener('touchstart', startResize,{passive:false}); 
@@ -213,12 +171,13 @@ function startResize(e){
   resize=true; 
   resizeDir=[...e.target.classList].find(c=>['nw','ne','sw','se'].includes(c)); 
   const pos=getEventPos(e); 
-  startX=pos.x; 
-  startY=pos.y; 
-  origX=parseInt(cropRect.style.left)||0;
-  origY=parseInt(cropRect.style.top)||0;
-  origW=cropRect.offsetWidth; 
-  origH=cropRect.offsetHeight; 
+  startX=pos.x; startY=pos.y; 
+  const rect=cropRect.getBoundingClientRect();
+  const contRect=container.getBoundingClientRect();
+  origX=rect.left-contRect.left;
+  origY=rect.top-contRect.top;
+  origW=rect.width; 
+  origH=rect.height; 
   window.addEventListener('mousemove',onResize);
   window.addEventListener('touchmove',onResize,{passive:false});
   window.addEventListener('mouseup',stopResize);
@@ -237,6 +196,8 @@ function onResize(e){
   if(resizeDir.includes('s')){ newHeight += dy; }
   newWidth=Math.max(minWidth,newWidth); 
   newHeight=Math.max(minHeight,newHeight);
+  newLeft=clamp(newLeft,0,container.offsetWidth-newWidth);
+  newTop=clamp(newTop,0,container.offsetHeight-newHeight);
   cropRect.style.left=newLeft+'px'; 
   cropRect.style.top=newTop+'px'; 
   cropRect.style.width=newWidth+'px'; 
@@ -259,14 +220,18 @@ document.getElementById('save-crop').addEventListener('click', async()=>{
   const cropX=(rect.left-imgRect.left)*scaleX;
   const cropY=(rect.top-imgRect.top)*scaleY;
   const cropW=rect.width*scaleX, cropH=rect.height*scaleY;
-  const cropPosStr=${Math.round(cropX)},${Math.round(cropY)},${Math.round(cropW)},${Math.round(cropH)};
+  const cropPosStr=`${Math.round(cropX)},${Math.round(cropY)},${Math.round(cropW)},${Math.round(cropH)}`;
   if(lastCropPosition===cropPosStr) return alert('לא ניתן לחתוך שוב באותו מיקום. יש להזיז את הריבוע.');
   lastCropPosition=cropPosStr;
 
   const canvas=document.createElement('canvas'); canvas.width=cropW; canvas.height=cropH;
   const ctx=canvas.getContext('2d'); ctx.drawImage(img,cropX,cropY,cropW,cropH,0,0,cropW,cropH);
 
-  const res=await fetch('/backend/save_crop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:letters[currentIndex],index:currentIndex,data:canvas.toDataURL('image/png')})});
+  const res=await fetch('/backend/save_crop',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:letters[currentIndex],index:currentIndex,data:canvas.toDataURL('image/png')})
+  });
   const json=await res.json();
   if(json.error) return alert('שגיאה בשמירה: '+json.error);
 
@@ -277,7 +242,7 @@ document.getElementById('save-crop').addEventListener('click', async()=>{
   if(currentIndex>=letters.length){
     document.getElementById('status').textContent='🎉 כל האותיות נשמרו! לחץ על "צור פונט" כדי להפיק את הפונט.';
     generateBtn.style.display='inline-block';
-  } else document.getElementById('status').textContent=✅ האות "${letters[currentIndex-1]}" נשמרה!;
+  } else document.getElementById('status').textContent=`✅ האות "${letters[currentIndex-1]}" נשמרה!`;
 });
 
 // Undo
@@ -285,7 +250,7 @@ document.getElementById('undo-crop').addEventListener('click',()=>{
   if(history.length===0) return;
   currentIndex=history.pop();
   lettersBar.children[currentIndex].classList.remove('done');
-  document.getElementById('status').textContent=🔄 חיתוך האות "${letters[currentIndex]}" בוטל.;
+  document.getElementById('status').textContent=`🔄 חיתוך האות "${letters[currentIndex]}" בוטל.`;
   updateLettersBar();
 });
 
