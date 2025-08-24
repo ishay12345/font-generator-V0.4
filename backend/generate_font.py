@@ -17,13 +17,13 @@ letter_map = {
 }
 
 # ===== הזזות אנכיות =====
-vertical_offsets = {"yod": 500, "qof": -250}
+vertical_offsets = {"yod": 370, "qof": -250}
 
 # ===== הגדרות כלליות =====
-GLOBAL_Y_SHIFT = -400
-PADDING_GENERAL = 15
-GLOBAL_SCALE = 0.7
-
+GLOBAL_Y_SHIFT = 0
+PADDING_GENERAL = 12
+PADDING_LARGE = 15
+GLOBAL_SCALE = 1.0
 # ===== טרנספורמציות מיוחדות =====
 special_transforms = {}
 
@@ -64,13 +64,13 @@ def generate_ttf(svg_folder, output_ttf):
 
             glyph = font.newGlyph(name)
             glyph.unicode = unicode_val
-            glyph.width = 500
+            glyph.width = 465
             if name == "alef":
                 glyph.leftMargin = 70
                 glyph.rightMargin = 20
             else:
-                glyph.leftMargin = 20
-                glyph.rightMargin = 20
+                glyph.leftMargin = 14
+                glyph.rightMargin = 14
 
             vertical_shift = vertical_offsets.get(name, 0) + GLOBAL_Y_SHIFT
             transform = Identity.scale(GLOBAL_SCALE, GLOBAL_SCALE).translate(PADDING_GENERAL, vertical_shift - PADDING_GENERAL)
