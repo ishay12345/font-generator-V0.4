@@ -9,10 +9,7 @@
   <meta name="description" content="המרת כתב יד לפונט אישי בעברית – קל, מהיר, ותוך דקות יש לכם פונט דיגיטלי משלכם. מושלם לעבודות, פרויקטים וכתיבה ייחודית.">
 
   <!-- מילות מפתח -->
-  <meta name="keywords" content="פונט אישי, כתב יד לפונט, יצירת פונט, פונטים בעברית, פונט דיגיטלי, המרת כתב יד, הפיכת כתב יד לפונט , פונטים אישיים">
-
-  <!-- שם יוצר האתר -->
-  <meta name="author" content="ישי אדרי">
+  <meta name="keywords" content="פונט אישי, כתב יד לפונט, יצירת פונט, פונטים בעברית, פונט דיגיטלי, המרת כתב יד, הפיכת כתב יד לפונט, פונטים אישיים">
 
   <style>
     html, body {
@@ -22,7 +19,6 @@
       height: 100%;
       overflow-x: hidden;
     }
-
     body {
       font-family: Arial, sans-serif;
       text-align: center;
@@ -37,7 +33,6 @@
       position: relative;
       padding: 20px;
     }
-
     .finisher-header {
       position: fixed;
       top: 0;
@@ -47,7 +42,6 @@
       z-index: -1;
       overflow: hidden;
     }
-
     .bsd {
       position: absolute;
       top: 10px;
@@ -57,33 +51,29 @@
       font-weight: bold;
       text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
-
     .logo-container {
       position: absolute;
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 10;
-      text-align: center; /* חדש */
-      width: 100%;        /* חדש */
+      text-align: center;
+      width: 100%;
     }
-
     .logo {
       max-width: 200px;
     }
-
     .main-content {
       margin-top: 185px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center; /* חדש */
+      justify-content: center;
       padding: 0 20px;
       width: 100%;
       box-sizing: border-box;
-      text-align: center;      /* חדש */
+      text-align: center;
     }
-
     .welcome {
       color: #fff;
       font-size: 1.1em;
@@ -91,14 +81,12 @@
       margin-bottom: 20px;
       text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
-
     h1 {
       color: #fff;
       margin-bottom: 20px;
       text-shadow: 0 0 10px rgba(0,0,0,0.3);
       font-size: 2em;
     }
-
     form {
       background: rgba(255, 255, 255, 0.08);
       padding: 25px 30px;
@@ -110,11 +98,9 @@
       margin: 0 auto;
       display: block;
     }
-
     input[type="file"] {
       display: none;
     }
-
     #file-label {
       display: inline-block;
       margin-top: 10px;
@@ -127,12 +113,10 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       transition: background 0.3s ease, transform 0.2s ease;
     }
-
     #file-label:hover {
       transform: scale(1.05);
       background: linear-gradient(45deg, #6bd6ff, #9138e5);
     }
-
     button, #download-btn {
       margin-top: 20px;
       background: linear-gradient(45deg, #6bd6ff, #9138e5);
@@ -147,29 +131,24 @@
       text-decoration: none;
       display: inline-block;
     }
-
     button:hover, #download-btn:hover {
       transform: scale(1.05);
       background: linear-gradient(45deg, #ffcb57, #ff333d);
     }
-
     button:disabled {
       background: #555 !important;
       cursor: not-allowed;
     }
-
     #download-btn[disabled] {
       background: #888;
       pointer-events: none;
     }
-
     #status {
       margin-top: 20px;
       font-size: 1.1em;
       color: #fff;
       text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
-
     .bottom-fill {
       position: fixed;
       bottom: 0;
@@ -179,7 +158,6 @@
       background: #9138e5;
       z-index: -2;
     }
-
     .page-link {
       margin-top: 30px;
       color: #fff;
@@ -187,11 +165,9 @@
       text-decoration: underline;
       cursor: pointer;
     }
-
     .page-link:hover {
       color: #ffcb57;
     }
-
     .faq {
       margin-top: 60px;
       background: rgba(255, 255, 255, 0.05);
@@ -201,34 +177,28 @@
       color: #fff;
       box-shadow: 0 0 20px rgba(0,0,0,0.3);
     }
-
     @media (max-width: 600px) {
       h1 {
         font-size: 1.4em;
       }
-
       #file-label,
       button,
       #download-btn {
         font-size: 0.9em;
         padding: 10px 18px;
       }
-
       .bsd {
         font-size: 0.9em;
         right: 10px;
         top: 8px;
       }
-
       .logo {
         max-width: 120px;
       }
-
       .main-content {
         margin-top: 80px;
         margin-right: 20px;
       }
-
       .welcome {
         font-size: 1em;
         margin-top: 100px;
@@ -241,7 +211,7 @@
   <div class="bsd">בס"ד</div>
 
   <div class="logo-container">
-    <img class="logo" src="backend/assets/my.png" alt="לוגו">
+    <img class="logo" src="{{ url_for('static', filename='my-removebg-preview.png') }}" alt="לוגו">
   </div>
 
   <div class="welcome">האתר שיצור את הפונט בשבילכם לכל מטרה</div>
@@ -302,4 +272,3 @@
   </script>
 </body>
 </html>
-
