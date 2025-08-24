@@ -63,9 +63,6 @@ LETTERS_ORDER = [
 # פונקציות יצירת חשבונית
 # ----------------------
 def create_invoice_payload(name, email, total_sum=1.0):
-    """
-    מחזיר מילון של פרמטרים ליצירת חשבונית בזמן בקשת החיוב
-    """
     now_str = datetime.now().strftime("%d/%m/%Y")
     payload = {
         "TerminalNumber": CARD_COM_TERMINAL,
@@ -81,27 +78,21 @@ def create_invoice_payload(name, email, total_sum=1.0):
         "IndicatorUrl": request.host_url + "cardcom-indicator",
         "CustomerEmail": email,
         "CustomerName": name,
-        # ⚡ פרטי החשבונית – InvExtHead
         "InvoiceHead.CustName": name,
         "InvoiceHead.SendByEmail": "true",
         "InvoiceHead.Language": "he",
         "InvoiceHead.Email": email,
-        "InvoiceHead.CompID": "123456789",  # ת.ז./ח.פ של הלקוח
+        "InvoiceHead.CompID": "123456789",
         "InvoiceHead.IsAutoCreateUpdateAccount": "true",
         "InvoiceHead.ExtIsVatFree": "true",
         "InvoiceHead.Date": now_str,
     }
-
-    # ⚡ שורות החשבונית
-    # כאן נניח שורה אחת עם פריט יחיד
     payload.update({
         "InvoiceLines1.Description": "פונט אישי",
         "InvoiceLines1.Price": f"{total_sum:.2f}",
         "InvoiceLines1.Quantity": "1",
         "InvoiceLines1.IsVatFree": "true"
     })
-
-    # urlencode לכל הערכים
     return {k: v for k, v in payload.items()}
 
 # ----------------------
@@ -190,10 +181,8 @@ def save_crop():
 @app.route('/generate_font', methods=['POST'])
 def generate_font_route():
     try:
-        # מנסה ליצור את הפונט
         generate_ttf(svg_folder=SVG_DIR, output_ttf=FONT_OUTPUT_PATH)
 
-        # בדיקה אם הקובץ נוצר
         if os.path.exists(FONT_OUTPUT_PATH):
             session['font_ready'] = True
             return jsonify({
@@ -201,7 +190,6 @@ def generate_font_route():
                 "download_url": url_for('download_page')
             })
         
-        # אם לא נוצר, מחזירים הודעת שגיאה ברורה
         session['font_ready'] = False
         return jsonify({
             "status": "error",
@@ -209,12 +197,12 @@ def generate_font_route():
         })
 
     except Exception as e:
-        # טיפול בשגיאות לא צפויות
         session['font_ready'] = False
         return jsonify({
             "status": "error",
             "message": f"❌ שגיאה בלתי צפויה בזמן יצירת הפונט: {str(e)}"
         })
+
 # ----------------------
 # ⬇️ הורדת פונט
 # ----------------------
@@ -254,7 +242,6 @@ def start_payment():
     if not email:
         return "יש להזין כתובת מייל", 400
 
-    # יצירת payload כולל פרטי חשבונית
     payload = create_invoice_payload(name, email, total_sum=1.0)
     payload["codepage"] = "65001"
     payload["SuccessRedirectUrl"] = request.host_url + "thankyou"
@@ -273,14 +260,20 @@ def start_payment():
     except Exception as e:
         return f"שגיאה בעת יצירת התשלום: {str(e)}", 500
 
+# ----------------------
+# ⚡ פונקציה זמנית לשליחת חשבונית – למניעת שגיאה
+def send_invoice(email, name):
+    # כרגע רק מדפיס כדי למנוע NameError
+    print(f"Invoice sent to {email} ({name})")
+    # כאן אפשר לשים קוד לשליחת מייל אמיתי בעתיד
 
+# ----------------------
 @app.route('/cardcom-indicator', methods=['GET', 'POST'])
 def cardcom_indicator():
     data = request.form.to_dict() if request.method == 'POST' else request.args.to_dict()
 
     if data.get("OperationResponse") == "0":  # תשלום הצליח
         session["paid"] = True
-        # שליחת חשבונית אוטומטית
         send_invoice(session.get("customer_email"), session.get("customer_name"))
     else:
         session["paid"] = False
@@ -312,5 +305,4 @@ def faq():
 # ----------------------
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-
 
