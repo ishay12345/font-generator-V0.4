@@ -273,6 +273,17 @@ async function createFont() {
 generateBtn.addEventListener('click',createFont);
 
 updateLettersBar();
+// למקם את הריבוע במרכז התמונה אחרי שהטענה הסתיימה
+img.addEventListener("load", () => {
+  const imgRect = img.getBoundingClientRect();
+  const rectW = cropRect.offsetWidth;
+  const rectH = cropRect.offsetHeight;
+  const centerX = (imgRect.width - rectW) / 2;
+  const centerY = (imgRect.height - rectH) / 2;
+  cropRect.style.left = centerX + "px";
+  cropRect.style.top = centerY + "px";
+});
+
 {% endif %}
 </script>
 </body>
