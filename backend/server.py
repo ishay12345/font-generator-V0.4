@@ -252,7 +252,7 @@ def start_payment():
         return "יש להזין כתובת מייל", 400
 
     # יצירת payload כולל פרטי חשבונית
-    payload = create_invoice_payload(name, email, total_sum=1.0)
+    payload = create_invoice_payload(name, email, total_sum=24.90)
     payload["codepage"] = "65001"
     payload["SuccessRedirectUrl"] = request.host_url + "thankyou"
     payload["ErrorRedirectUrl"] = request.host_url + "payment"
